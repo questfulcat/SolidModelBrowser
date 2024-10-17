@@ -1,0 +1,163 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <!-- Common -->
+    
+    <SolidColorBrush x:Key="ForegroundText" Color="#FFF" />
+    
+    
+    
+    <!-- Window -->
+
+    <SolidColorBrush x:Key="WindowStroke" Color="#999" />
+    
+    <!--LinearGradientBrush x:Key="WindowBackground" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="Gray" Offset="0" />
+        <GradientStop Color="#FF2B2B2B" Offset="1" />
+    </LinearGradientBrush-->
+
+    <SolidColorBrush x:Key="WindowBack" Color="#303030" />
+    <SolidColorBrush x:Key="PanelBack" Color="#404040" />
+    <SolidColorBrush x:Key="WindowFore" Color="#A0A0A0" />
+
+    <SolidColorBrush x:Key="Separator" Color="#40606060" />
+
+    <SolidColorBrush x:Key="TransparentHandle" Color="#01000000" />
+
+
+    <!-- Slider -->
+
+    <SolidColorBrush x:Key="SliderTrackBackground" Color="#444" />
+
+    <LinearGradientBrush x:Key="SliderBorder" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#555" Offset="0.0"/>
+        <GradientStop Color="#777" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="SliderKnob" Color="#555" />
+    
+
+    <!-- CheckBox -->
+
+    <!--<LinearGradientBrush x:Key="CheckBoxBorder" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#555" Offset="0.0"/>
+        <GradientStop Color="#777" Offset="1.0"/>
+    </LinearGradientBrush>-->
+    <SolidColorBrush x:Key="CheckBoxBorder" Color="#505050" />
+
+    <SolidColorBrush x:Key="CheckBoxGlyph" Color="#BBB" />
+    <SolidColorBrush x:Key="CheckBoxDisabled" Color="#333" />
+    <SolidColorBrush x:Key="CheckBoxBorderDisabled" Color="#555" />
+
+    <SolidColorBrush x:Key="CheckBoxPressed" Color="#555" />
+    <SolidColorBrush x:Key="CheckBoxHighlight" Color="#555" />
+
+    <SolidColorBrush x:Key="CheckBoxBack" Color="#444" />
+    <!--<LinearGradientBrush x:Key="CheckBoxBack" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#222" Offset="0.0"/>
+        <GradientStop Color="#444" Offset="1.0"/>
+    </LinearGradientBrush>-->
+    
+    
+    
+    <!-- TreeView / FolderBrowser -->
+
+    <!--<SolidColorBrush x:Key="TreeBackground" Color="#FF303030" />
+    
+    <SolidColorBrush x:Key="TreeCheckBoxBack" Color="#555" />
+    <SolidColorBrush x:Key="TreeCheckBoxBackHighlight" Color="#888" />
+    <SolidColorBrush x:Key="TreeCheckBoxBackPressed" Color="#BBB" />
+    
+    <LinearGradientBrush x:Key="TreeCheckBoxChecked" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFF" Offset="0.0"/>
+        <GradientStop Color="#DDD" Offset="1.0"/>
+    </LinearGradientBrush>
+
+
+    <LinearGradientBrush x:Key="TreeCursorBackground" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#777" Offset="0.0"/>
+        <GradientStop Color="#555" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="TreeCursorBorder" Color="#AAA" />
+
+    <SolidColorBrush x:Key="TreeExpandCollapseToggleDim" Color="#DDD" />
+    <SolidColorBrush x:Key="TreeExpandCollapseToggleBack" Color="#AAA" />-->
+
+    
+
+    <!-- ScrollBar -->
+
+    <SolidColorBrush x:Key="ScrollbarBack" Color="Transparent" />
+    <!--<SolidColorBrush x:Key="ScrollbarPressed" Color="#AAA" />
+    <SolidColorBrush x:Key="ScrollbarDisabled" Color="#333" />-->
+    <!--<SolidColorBrush x:Key="ScrollbarGlyph" Color="#444" />-->
+
+    <SolidColorBrush x:Key="ScrollbarVertical" Color="#555" />
+    <SolidColorBrush x:Key="ScrollbarVerticalBorder" Color="#555" />
+
+    <SolidColorBrush x:Key="ScrollbarHorizontal" Color="#555" />
+    <SolidColorBrush x:Key="ScrollbarHorizontalBorder" Color="#555" />
+
+
+
+    <!-- Button -->
+
+    <SolidColorBrush x:Key="ButtonBorder" Color="Transparent" />
+    
+    <SolidColorBrush x:Key="ButtonPressed" Color="#999" />
+
+    <SolidColorBrush x:Key="ButtonChecked" Color="#40FFFFFF" />
+
+    <SolidColorBrush x:Key="ButtonContent" Color="#DDD" />
+
+    <SolidColorBrush x:Key="ButtonImageColor" Color="#BBB" />
+
+    <SolidColorBrush x:Key="ButtonBack" Color="Transparent" />
+    <!--<LinearGradientBrush x:Key="ButtonBack" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#777" Offset="0"/>
+        <GradientStop Color="#555" Offset="1"/>
+    </LinearGradientBrush>-->
+
+    <SolidColorBrush x:Key="ButtonHighlight" Color="#555" />
+    <!--<RadialGradientBrush x:Key="ButtonHighlight" Center="0.5,0.9" GradientOrigin="0.5,0.9" RadiusY="0.7" RadiusX="0.9">
+        <GradientStop Color="#999" Offset="0"/>
+        <GradientStop Color="#777" Offset="1"/>
+    </RadialGradientBrush>-->
+
+    <SolidColorBrush x:Key="MenuButton_ReloadModel" Color="#BBB" />
+    <SolidColorBrush x:Key="MenuButton_CenterCameraAtModel" Color="#CCC" />
+    <SolidColorBrush x:Key="MenuButton_Rotate" Color="#AAF" />
+    <SolidColorBrush x:Key="MenuButton_DiffuseMaterial" Color="#DD0" />
+    <SolidColorBrush x:Key="MenuButton_SpecularMaterial" Color="#AA8" />
+    <SolidColorBrush x:Key="MenuButton_EmissiveMaterial" Color="#88F" />
+    <SolidColorBrush x:Key="MenuButton_BacksideDifuseMaterial" Color="#E77" />
+
+    <SolidColorBrush x:Key="MenuButton_Settings" Color="#BBF" />
+
+    <!-- TextBox -->
+
+    <SolidColorBrush x:Key="TextBoxBack" Color="#444" />
+    <SolidColorBrush x:Key="TextBoxFore" Color="#BBB" />
+    <SolidColorBrush x:Key="TextBoxBorder" Color="#505050" />
+    <SolidColorBrush x:Key="TextBoxMouseOver" Color="#555" />
+    <SolidColorBrush x:Key="TextBoxFocused" Color="#AAA" />
+    <SolidColorBrush x:Key="TextBoxButtons" Color="#777" />
+
+    <!--<LinearGradientBrush x:Key="TextBoxBorder" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#333" Offset="0.0"/>
+        <GradientStop Color="#555" Offset="1.0"/>
+    </LinearGradientBrush>-->
+
+    <!-- ListBox -->
+
+    <SolidColorBrush x:Key="ListBoxSelectedItem" Color="#555" />
+
+    <!-- ToolTip -->
+
+    <SolidColorBrush x:Key="ToolTipBack" Color="#303030" />
+    <SolidColorBrush x:Key="ToolTipBorder" Color="#404040" />
+    
+
+</ResourceDictionary>
