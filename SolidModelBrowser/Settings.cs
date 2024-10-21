@@ -28,11 +28,18 @@ namespace SolidModelBrowser
         [PropertyInfo(Category = "Main Window", Description = "Window height")]
         public double Height { get; set; } = 600;
 
+        [PropertyInfo(Category = "Main Window", Description = "Max Window width, set 0 for screen limit")]
+        public double MaxWidth { get; set; } = 0;
+
+        [PropertyInfo(Category = "Main Window", Description = "Max Window height, set 0 for screen limit\r\n# this option is to manually limit window on non primary displays")]
+        public double MaxHeight { get; set; } = 0;
+
         [PropertyInfo(Category = "Main Window", Description = "Width of file panel")]
         public double FilePanelWidth { get; set; } = 200;
 
         [PropertyInfo(Category = "Main Window", Description = "Opacity of file panel when it is not in use")]
         public double FilePanelIdleOpacity { get; set; } = 0.2;
+
 
         [PropertyInfo(Category = "Utils", Description = "External application to open current viewed file")]
         public string ExternalApp { get; set; } = "";
@@ -84,6 +91,12 @@ namespace SolidModelBrowser
         [PropertyInfo(Category = "Interface", Description = "Show XYZ axes lines")]
         public bool IsAxesEnabled { get; set; } = false;
 
+
+        [PropertyInfo(Category = "Camera", Description = "Camera field of view angle")]
+        public double FOV { get; set; } = 45.0;
+
+        [PropertyInfo(Category = "Camera", Description = "Camera field of view angle in fish eye mode")]
+        public double FishEyeFOV { get; set; } = 120.0;
 
 
         string defPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "settings.ini");

@@ -12,7 +12,7 @@ namespace SolidModelBrowser
 {
     public partial class MainWindow : Window
     {
-        string version = "0.1";
+        string version = "0.2";
         Point3D modelCenter = new Point3D();
         Vector3D modelSize = new Vector3D();
 
@@ -31,9 +31,7 @@ namespace SolidModelBrowser
         {
             InitializeComponent();
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture; // to avoid "." "," mess while parsing
-            MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight; // to avoid taskbar overlay
-            MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
-
+                        
             filePanel.IsIgnoringLetterKeysNavigation = true;
             filePanel.Extensions = new List<string>();
             foreach (Import importer in imports) filePanel.Extensions.AddRange(importer.Extensions);
@@ -54,6 +52,15 @@ namespace SolidModelBrowser
 
             loadSettings();
             this.Closing += (s, e) => saveSettings();
+
+            // set max window size to avoid taskbar overlay
+            var scrsize = Utils.GetCurrentScreenSize(this);
+            MaxWidth = settings.MaxWidth < 1 ? scrsize.Width : Math.Max(settings.MaxWidth, MinWidth);
+            MaxHeight = settings.MaxHeight < 1 ? scrsize.Height : Math.Max(settings.MaxHeight, MinHeight);
+
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length == 2 && File.Exists(args[1]) && selectImporter(args[1])) loadFile(args[1]);
+
         }
 
         void saveSettings()
@@ -101,6 +108,9 @@ namespace SolidModelBrowser
             ButtonFishEyeFOV.IsChecked = settings.IsFishEyeModeEnabled;
             ButtonAxes.IsChecked = settings.IsAxesEnabled;
 
+            settings.FOV = Utils.MinMax(settings.FOV, 5.0, 160.0);
+            settings.FishEyeFOV = Utils.MinMax(settings.FishEyeFOV, 5.0, 160.0);
+
             updateCameraModes();
             updateAxes();
 
@@ -114,7 +124,7 @@ namespace SolidModelBrowser
             {
                 //textBlockProgress.Text = ImportBase.Progress.ToString();
                 borderProgressContainer.Visibility = Visibility.Visible;
-                borderProgress.Width = Import.Progress;
+                borderProgress.Width = Import.Progress < 0 ? 0 : (Import.Progress > 100 ? 100 : Import.Progress);
 
                 if (currentTask?.Status == TaskStatus.Running) return;
                 loadingTimer.Stop();
@@ -224,7 +234,15 @@ namespace SolidModelBrowser
                 clearView();
                 if (lastFilename != null) loadFile(lastFilename);
             }
+            if (e.Key == Key.F6)
+            {
+                ButtonSaveImage_Click(sender, e);
+            }
             if (e.Key == Key.F7)
+            {
+                ButtonOpenExtApp_Click(sender, e);
+            }
+            if (e.Key == Key.F8)
             {
                 ButtonSelectCamera.IsChecked = !ButtonSelectCamera.IsChecked;
                 camera.SelectType(ButtonSelectCamera.IsChecked.Value);
@@ -278,8 +296,9 @@ namespace SolidModelBrowser
 
 
 
-        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Handler_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.ClickCount == 2) { ButtonMaximize_Click(sender, e); return; }
             if (e.ChangedButton == MouseButton.Left) this.DragMove();
         }
 
@@ -421,7 +440,7 @@ namespace SolidModelBrowser
         void updateCameraModes()
         {
             camera.SelectType(ButtonSelectCamera.IsChecked.Value);
-            camera.FOV = ButtonFishEyeFOV.IsChecked.Value ? 120.0 : 45.0;
+            camera.FOV = ButtonFishEyeFOV.IsChecked.Value ? settings.FishEyeFOV : settings.FOV;
         }
 
         private void ButtonSelectCamera_Click(object sender, RoutedEventArgs e)

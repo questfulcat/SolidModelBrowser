@@ -126,15 +126,23 @@
         <GradientStop Color="#777" Offset="1"/>
     </RadialGradientBrush>-->
 
-    <SolidColorBrush x:Key="MenuButton_ReloadModel" Color="#BBB" />
-    <SolidColorBrush x:Key="MenuButton_CenterCameraAtModel" Color="#CCC" />
+    <SolidColorBrush x:Key="MenuButton_ReloadModel" Color="#CCC" />
+    <SolidColorBrush x:Key="MenuButton_SaveImage" Color="#CEC" />
+    <SolidColorBrush x:Key="MenuButton_OpenExtApp" Color="#DDD" />
     <SolidColorBrush x:Key="MenuButton_Rotate" Color="#AAF" />
     <SolidColorBrush x:Key="MenuButton_DiffuseMaterial" Color="#DD0" />
     <SolidColorBrush x:Key="MenuButton_SpecularMaterial" Color="#AA8" />
     <SolidColorBrush x:Key="MenuButton_EmissiveMaterial" Color="#88F" />
     <SolidColorBrush x:Key="MenuButton_BacksideDifuseMaterial" Color="#E77" />
-
-    <SolidColorBrush x:Key="MenuButton_Settings" Color="#BBF" />
+    <SolidColorBrush x:Key="MenuButton_SelectCamera" Color="#CCC" />
+    <SolidColorBrush x:Key="MenuButton_CenterCameraAtModel" Color="#CCC" />
+    <SolidColorBrush x:Key="MenuButton_FishEyeFOV" Color="#AAE" />
+    <SolidColorBrush x:Key="MenuButton_Axes" Color="#DDD" />
+    <SolidColorBrush x:Key="MenuButton_SwapNormals" Color="#FAA" />
+    <SolidColorBrush x:Key="MenuButton_RemoveNormals" Color="#FAA" />
+    <SolidColorBrush x:Key="MenuButton_ChangeVerticesOrder" Color="#FAA" />
+    <SolidColorBrush x:Key="MenuButton_ShowInfo" Color="#AAE" />
+    <SolidColorBrush x:Key="MenuButton_Settings" Color="#CCA" />
 
     <!-- TextBox -->
 

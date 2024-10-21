@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
@@ -152,5 +153,12 @@ namespace SolidModelBrowser
         //    for(int c = 0; c < indices.Count; c += 3) sb.AppendLine($"f {indices[c]} {indices[c + 1]} {indices[c + 2]}");
         //    File.WriteAllText(@"c:\downloads\text.txt", sb.ToString());
         //}
+
+        public static Size GetCurrentScreenSize(System.Windows.Window w)
+        {
+            var scr = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(w).Handle);
+            if (scr.Primary) return new Size(SystemParameters.MaximizedPrimaryScreenWidth, SystemParameters.MaximizedPrimaryScreenHeight);
+            return new Size(scr.WorkingArea.Width + 16, scr.WorkingArea.Height + 16);
+        }
     }
 }

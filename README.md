@@ -19,7 +19,7 @@ Build project with Visual Studio 2022
 
 ## Features
 
-- Open binary and ASCII STL files, load main model from 3MF files (CURA projects, etc), partial support for OBJ files with triangle faces
+- Open binary and ASCII STL files, load main 3Dmodel from 3MF files (CURA projects), partial support for OBJ files with triangle faces
 
 - Fly camera around model
 
