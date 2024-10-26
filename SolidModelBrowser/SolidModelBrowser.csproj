@@ -66,6 +66,7 @@
     <Compile Include="FileNavigationPanel.xaml.cs">
       <DependentUpon>FileNavigationPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="HelpString.cs" />
     <Compile Include="Import.cs" />
     <Compile Include="Import3MF.cs" />
     <Compile Include="ImportOBJ.cs" />

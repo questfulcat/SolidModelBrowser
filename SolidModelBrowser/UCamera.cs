@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Media.Media3D;
 
 namespace SolidModelBrowser
@@ -28,11 +23,17 @@ namespace SolidModelBrowser
             validateCamera();
         }
 
-        public void DefaultPosition(double modelLen)
+        public void DefaultPosition(double modelLen, double cameraInitialShift)
         {
-            Position = new Point3D(lookCenter.X, lookCenter.Y - modelLen * 2, lookCenter.Z + modelLen);
+            Position = new Point3D(lookCenter.X, lookCenter.Y - modelLen * cameraInitialShift, lookCenter.Z + modelLen * cameraInitialShift / 2);
             validateCamera();
-            camOrthographic.Width = modelLen * 2;
+            camOrthographic.Width = modelLen * cameraInitialShift;
+        }
+
+        public void RelativePosition(double modelLen, double dx, double dy, double dz)
+        {
+            Position = new Point3D(lookCenter.X + dx * modelLen, lookCenter.Y + dy * modelLen, lookCenter.Z + dz * modelLen);
+            validateCamera();
         }
 
         public void TurnAt(Point3D pos)

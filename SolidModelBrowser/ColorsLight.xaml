@@ -19,6 +19,7 @@
 
     <SolidColorBrush x:Key="WindowBack" Color="#DDD" />
     <SolidColorBrush x:Key="PanelBack" Color="#CCC" />
+    <SolidColorBrush x:Key="InfoPanel" Color="#A0C0C0C0" />
     <SolidColorBrush x:Key="WindowFore" Color="#333" />
 
     <SolidColorBrush x:Key="Separator" Color="#40606060" />
@@ -149,6 +150,8 @@
     <SolidColorBrush x:Key="MenuButton_CenterCameraAtModel" Color="#444" />
     <SolidColorBrush x:Key="MenuButton_FishEyeFOV" Color="#44A" />
     <SolidColorBrush x:Key="MenuButton_Axes" Color="#444" />
+    <SolidColorBrush x:Key="MenuButton_Ground" Color="#449" />
+    <SolidColorBrush x:Key="MenuButton_RecreateUnsmoothed" Color="#A44" />
     <SolidColorBrush x:Key="MenuButton_SwapNormals" Color="#A44" />
     <SolidColorBrush x:Key="MenuButton_RemoveNormals" Color="#A44" />
     <SolidColorBrush x:Key="MenuButton_ChangeVerticesOrder" Color="#A44" />
@@ -172,6 +175,6 @@
 
     <SolidColorBrush x:Key="ToolTipBack" Color="#CCC" />
     <SolidColorBrush x:Key="ToolTipBorder" Color="#AAA" />
-
+    
 
 </ResourceDictionary>

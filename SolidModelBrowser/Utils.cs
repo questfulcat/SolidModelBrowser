@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -118,11 +120,31 @@ namespace SolidModelBrowser
             mesh.TriangleIndices = v;
         }
 
+        public static void RecreateUnsmoothed(MeshGeometry3D mesh)
+        {
+            var p = new Point3DCollection(mesh.Positions.Count);
+            var i = new Int32Collection(mesh.TriangleIndices.Count);
+            for(int c = 0; c < mesh.TriangleIndices.Count; c++)
+            {
+                p.Add(mesh.Positions[mesh.TriangleIndices[c]]);
+                i.Add(c);
+            }
+            mesh.Positions = p;
+            mesh.TriangleIndices = i;
+            mesh.Normals.Clear();
+        }
+
         public static double MinMax(this double value, double min, double max)
         {
             if (value < min) value = min;
             if (value > max) value = max;
             return value;
+        }
+
+        public static double SelectInRange(this double value, double[] options, double defvalue)
+        {
+            if (options.Contains(value)) return value;
+            return defvalue;
         }
 
         public static void RenderElementToPNG(FrameworkElement e, string filename, int dpi)
@@ -159,6 +181,14 @@ namespace SolidModelBrowser
             var scr = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(w).Handle);
             if (scr.Primary) return new Size(SystemParameters.MaximizedPrimaryScreenWidth, SystemParameters.MaximizedPrimaryScreenHeight);
             return new Size(scr.WorkingArea.Width + 16, scr.WorkingArea.Height + 16);
+        }
+
+        public static string GetKeyboardModifiers()
+        {
+            string CAS = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl) ? "C" : "";
+            CAS += Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt) ? "A" : "";
+            CAS += Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) ? "S" : "";
+            return CAS;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Media3D;
@@ -19,7 +20,7 @@ namespace SolidModelBrowser
 
         string readZipEntry(ZipArchive zfile, string entryName)
         {
-            var zentry = zfile.Entries.First(e => e.Name.ToLower() == entryName);
+            var zentry = zfile.Entries.First(e => e.FullName.ToLower() == entryName);
             using (var sr = new StreamReader(zentry.Open(), Encoding.UTF8))
                 return sr.ReadToEnd();
         }
@@ -58,6 +59,7 @@ namespace SolidModelBrowser
 
         Matrix3D buildMatrix(string s)
         {
+            if (string.IsNullOrWhiteSpace(s)) return new Matrix3D();
             var p = s.Split(' ');
             var m = new Matrix3D();
             m.M11 = double.Parse(p[0]);
@@ -125,60 +127,116 @@ namespace SolidModelBrowser
             return t;
         }
 
-        public override void Load(string filename)
+        int basepos = 0;
+        long pr_len, pr_avglinelen, pr_pos;
+        void initProgress(string data)
         {
-            string model;
-            using (var zfile = ZipFile.OpenRead(filename))
+            pr_len = data.Length;
+            pr_avglinelen = Regex.Match(data, "^.*?<vertex.*?$", RegexOptions.Multiline).Length;
+            pr_pos = 0;
+        }
+
+        void appendProgress(string data)
+        {
+            pr_len += data.Length;
+            pr_avglinelen = Regex.Match(data, "^.*?<vertex.*?$", RegexOptions.Multiline).Length;
+        }
+
+        void stepProgress()
+        {
+            pr_pos += pr_avglinelen;
+            Progress = (int)(pr_pos * 100 / pr_len);
+        }
+
+        void parseMesh(string obj, Matrix3D mtr)
+        {
+            int pos = 0;
+            Vector3D? v0;
+            while ((v0 = getVertex(obj, ref pos)) != null)
             {
-                model = readZipEntry(zfile, "3dmodel.model");
+                Vector3D v = v0.Value * mtr;
+                Positions.Add(new Point3D(v.X + mtr.OffsetX, v.Y + mtr.OffsetY, v.Z + mtr.OffsetZ));
+
+                stepProgress();
+                if (StopFlag) return;
             }
+
+            pos = 0;
+            Triangle? t;
+            while ((t = getTriangle(obj, ref pos)) != null)
+            {
+                Indices.Add(t.Value.v1 + basepos);
+                Indices.Add(t.Value.v2 + basepos);
+                Indices.Add(t.Value.v3 + basepos);
+
+                //Vector3D n1 = Positions[t.Value.v3 + basepos] - Positions[t.Value.v2 + basepos];
+                //Vector3D n2 = Positions[t.Value.v1 + basepos] - Positions[t.Value.v2 + basepos];
+                //Vector3D n = Vector3D.CrossProduct(n1, n2);
+                //n.Normalize();
+                //Normals.Add(n);
+                //Normals.Add(n);
+                //Normals.Add(n);
+
+                stepProgress();
+                if (StopFlag) return;
+            }
+            basepos = Positions.Count;
+        }
+
+        void loadComponent(string comp, ZipArchive zfile, Matrix3D basemtr)
+        {
+            string id = getParam(comp, "objectid");
+            string path = getParam(comp, "p:path").TrimStart('/').ToLower();
+            string tr = getParam(comp, "transform");
+            Matrix3D mtr = buildMatrix(tr) * basemtr;
+            
+            string model = readZipEntry(zfile, path);
 
             string resources = getTag(model, "resources", false);
             var objects = getTags(resources, "object", false);
 
-            string build = getTag(model, "build", false);
-            var items = getTags(build, "item", true);
+            string obj = objects.Where(o => o.Contains($" id=\"{id}\"")).FirstOrDefault();
 
-            int basepos = 0;
+            appendProgress(obj);
 
-            long pr_len = model.Length;
-            long pr_avglinelen = Regex.Match(model, "^.*?<vertex.*?$", RegexOptions.Multiline).Length;
-            long pr_pos = 0;
+            parseMesh(obj, mtr);
+        }
 
-            foreach (string item in items)
+        public override void Load(string filename)
+        {
+            basepos = 0;
+            string model;
+            using (var zfile = ZipFile.OpenRead(filename))
             {
-                string id = getParam(item, "objectid");
-                string tr = getParam(item, "transform");
-                Matrix3D mtr = buildMatrix(tr);
+                model = readZipEntry(zfile, "3d/3dmodel.model");
 
-                string obj = objects.Where(o => o.Contains($" id=\"{id}\"")).FirstOrDefault();
-                if (obj.Contains("<components>")) ExceptionMessage = "3MF mesh with external components is not supported yet";
+                string resources = getTag(model, "resources", false);
+                var objects = getTags(resources, "object", false);
 
-                int pos = 0;
-                Vector3D? v0;
-                while((v0 = getVertex(obj, ref pos)) != null)
+                string build = getTag(model, "build", false);
+                var items = getTags(build, "item", true);
+
+                initProgress(model);
+
+                foreach (string item in items)
                 {
-                    Vector3D v = v0.Value * mtr;
-                    Positions.Add(new Point3D(v.X + mtr.OffsetX, v.Y + mtr.OffsetY, v.Z + mtr.OffsetZ));
+                    string id = getParam(item, "objectid");
+                    string tr = getParam(item, "transform");
+                    Matrix3D mtr = buildMatrix(tr);
 
-                    pr_pos += pr_avglinelen;
-                    Progress = (int)(pr_pos * 100 / pr_len);
+                    string obj = objects.Where(o => o.Contains($" id=\"{id}\"")).FirstOrDefault();
+
+                    //if (obj.Contains("<components>")) ExceptionMessage = "3MF mesh with external components is not supported yet";
+                    string components = getTag(obj, "components", false);
+                    if (components != null)
+                    {
+                        var comps = getTags(components, "component", true);
+                        foreach (var comp in comps) loadComponent(comp, zfile, mtr);
+                    }
+
+                    parseMesh(obj, mtr);
                     if (StopFlag) return;
                 }
-
-                pos = 0;
-                Triangle? t;
-                while((t = getTriangle(obj, ref pos)) != null)
-                {
-                    Indices.Add(t.Value.v1 + basepos);
-                    Indices.Add(t.Value.v2 + basepos);
-                    Indices.Add(t.Value.v3 + basepos);
-
-                    pr_pos += pr_avglinelen;
-                    Progress = (int)(pr_pos * 100 / pr_len);
-                    if (StopFlag) return;
-                }
-                basepos = Positions.Count;
             }
         }
     }

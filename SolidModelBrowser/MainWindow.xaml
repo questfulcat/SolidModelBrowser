@@ -99,28 +99,52 @@
                                         </GeometryModel3D.BackMaterial>
                                     </GeometryModel3D>
                                 </Model3DGroup>
-                                
-                                
 
-                                <!--<GeometryModel3D x:Name="ground">
+                                <GeometryModel3D x:Name="ground">
                                     <GeometryModel3D.Geometry>
                                         <MeshGeometry3D x:Name="gridmesh"
-                                            Positions="-1 -1 0  1 -1 0  -1 1 0  1 1 0"
+                                            Positions="-1000 -1000 0  1000 -1000 0  -1000 1000 0  1000 1000 0"
                                             TextureCoordinates="0 1  1 1  0 0  1 0"
                                             TriangleIndices="0 1 2  1 3 2"/>
                                     </GeometryModel3D.Geometry>
                                     <GeometryModel3D.Material>
                                         <MaterialGroup>
-                                            <DiffuseMaterial Brush="#40FFFFFF" />
-                                            --><!--<SpecularMaterial Brush="#DDD" />
-                                            <EmissiveMaterial Brush="#004" />--><!--
+                                            <DiffuseMaterial>
+                                                <DiffuseMaterial.Brush>
+                                                    <DrawingBrush Viewport="0,0,0.1,0.1" TileMode="Tile">
+                                                        <DrawingBrush.Drawing>
+                                                            <DrawingGroup>
+                                                                <GeometryDrawing Brush="#0000">
+                                                                    <GeometryDrawing.Geometry>
+                                                                        <RectangleGeometry Rect="0,0,100,100" />
+                                                                    </GeometryDrawing.Geometry>
+                                                                </GeometryDrawing>
+                                                                <GeometryDrawing>
+                                                                    <GeometryDrawing.Geometry>
+                                                                        <GeometryGroup>
+                                                                            <RectangleGeometry Rect="0,0,50,50" />
+                                                                            <RectangleGeometry Rect="50,50,50,50" />
+                                                                        </GeometryGroup>
+                                                                    </GeometryDrawing.Geometry>
+                                                                    <GeometryDrawing.Brush>
+                                                                        <SolidColorBrush Color="#4FFF" />
+                                                                    </GeometryDrawing.Brush>
+                                                                </GeometryDrawing>
+                                                            </DrawingGroup>
+                                                        </DrawingBrush.Drawing>
+                                                    </DrawingBrush>
+                                                </DiffuseMaterial.Brush>
+                                            </DiffuseMaterial>
+                                            <!--<DiffuseMaterial Brush="#40FFFFFF" />-->
+                                            <SpecularMaterial Brush="#DDD" />
+                                            <EmissiveMaterial Brush="#004" />
                                         </MaterialGroup>
                                     </GeometryModel3D.Material>
                                     <GeometryModel3D.BackMaterial>
                                         <DiffuseMaterial Brush="#40FFFFFF" />
                                     </GeometryModel3D.BackMaterial>
-                                </GeometryModel3D>-->
-                                
+                                </GeometryModel3D>
+
                             </Model3DGroup>
                         </ModelVisual3D.Content>
                     </ModelVisual3D>
@@ -179,8 +203,11 @@
                             <local:TextEncodedImage EncodedImage="?OO???o@?W??dBGw?`DGE?XAg`?cH?a@?`D__BOx?W??F?" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_FishEyeFOV}"></local:TextEncodedImage>
                         </ToggleButton>
                         <Rectangle Width="2" Fill="{DynamicResource Separator}" />
-                        <ToggleButton ToolTip="Show XYZ axes lines&#x0d;&#x0a;X-red, Y-green, Z-blue" Click="ButtonAxes_Click" Width="30" Height="30" x:Name="ButtonAxes">
+                        <ToggleButton ToolTip="Show XYZ axes lines [O]&#x0d;&#x0a;X-red, Y-green, Z-blue" Click="ButtonAxes_Click" Width="30" Height="30" x:Name="ButtonAxes">
                             <local:TextEncodedImage EncodedImage="?OO???A?o@?}??A?_??GM?AB_g?G@?IO_@Kw~F?o??C???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Axes}"></local:TextEncodedImage>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Show ground [P]" Click="ButtonGround_Click" Width="30" Height="30" x:Name="ButtonGround">
+                            <local:TextEncodedImage EncodedImage="0@@0000000000000000000l?PE5XZ1Ee`Z:FEUZZioO000" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Ground}"></local:TextEncodedImage>
                         </ToggleButton>
                         <Rectangle Width="2" Fill="{DynamicResource Separator}" />
                         <Button ToolTip="Swap Normals directions (if normals are present in model)&#x0d;&#x0a;it inverses lighting directions" Click="ButtonSwapNormals_Click" Width="30" Height="30">
@@ -192,8 +219,11 @@
                         <Button ToolTip="Change model faces vertices order&#x0d;&#x0a;it swaps front and back of all model faces" Click="ButtonChangeVerticesOrder_Click" Width="30" Height="30">
                             <local:TextEncodedImage EncodedImage="?OO???@oO?OC?A@o@~@_N?o@?G????_@?c??C?OA?W????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ChangeVerticesOrder}"></local:TextEncodedImage>
                         </Button>
+                        <Button ToolTip="Recreate unsmoothed [CTRL+F]&#x0d;&#x0a;If model structure is smoothed it regenerate model to flat mode&#x0d;&#x0a;It might change polygons lighting" Click="ButtonRecreateUnsmoothed_Click" Width="30" Height="30">
+                            <local:TextEncodedImage EncodedImage="0@@0004@P3>la74@014@014@014000lO0n30O0P30@0000" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_RecreateUnsmoothed}"></local:TextEncodedImage>
+                        </Button>
                         <Rectangle Width="2" Fill="{DynamicResource Separator}" />
-                        <ToggleButton ToolTip="Show model info" Click="ButtonShowInfo_Click" Width="30" Height="30" x:Name="ButtonShowInfo">
+                        <ToggleButton ToolTip="Show model info [I]" Click="ButtonShowModelInfo_Click" Width="30" Height="30" x:Name="ButtonShowModelInfo">
                             <local:TextEncodedImage EncodedImage="?OO???oB?e@_X??B?ZAwu@N{oZN{oB~~o~Nw~@{N?}@???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ShowInfo}"></local:TextEncodedImage>
                         </ToggleButton>
                         <Button ToolTip="Settings" Click="ButtonSettings_Click" Width="30" Height="30" x:Name="ButtonSettings">
@@ -229,7 +259,11 @@
 
                     <GridSplitter x:Name="FilePanelSplitter" Background="{DynamicResource TransparentHandle}" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="CurrentAndNext"/>
 
-                    <TextBlock x:Name="textBlockInfo" Grid.Column="1" Margin="16" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" />
+                    <Border x:Name="infoContainer" Margin="16" CornerRadius="4" Background="{DynamicResource InfoPanel}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <ScrollViewer>
+                            <TextBlock x:Name="textBlockInfo" Margin="16" TextWrapping="Wrap" />
+                        </ScrollViewer>
+                    </Border>
                     <Border x:Name="borderProgressContainer" Visibility="Hidden" Width="108" Height="20" CornerRadius="4" BorderThickness="1" Padding="2" BorderBrush="{DynamicResource WindowFore}" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <Border x:Name="borderProgress" Width="50" Height="16" CornerRadius="4" BorderThickness="1" Background="{DynamicResource WindowFore}" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left">
                             <!--TextBlock x:Name="textBlockProgress" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource WindowBack}">100</TextBlock-->

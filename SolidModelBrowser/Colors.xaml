@@ -18,7 +18,8 @@
     </LinearGradientBrush-->
 
     <SolidColorBrush x:Key="WindowBack" Color="#303030" />
-    <SolidColorBrush x:Key="PanelBack" Color="#404040" />
+    <SolidColorBrush x:Key="PanelBack" Color="#383838" />
+    <SolidColorBrush x:Key="InfoPanel" Color="#A0404040" />
     <SolidColorBrush x:Key="WindowFore" Color="#A0A0A0" />
 
     <SolidColorBrush x:Key="Separator" Color="#40606060" />
@@ -138,6 +139,8 @@
     <SolidColorBrush x:Key="MenuButton_CenterCameraAtModel" Color="#CCC" />
     <SolidColorBrush x:Key="MenuButton_FishEyeFOV" Color="#AAE" />
     <SolidColorBrush x:Key="MenuButton_Axes" Color="#DDD" />
+    <SolidColorBrush x:Key="MenuButton_Ground" Color="#BBE" />
+    <SolidColorBrush x:Key="MenuButton_RecreateUnsmoothed" Color="#FAA" />
     <SolidColorBrush x:Key="MenuButton_SwapNormals" Color="#FAA" />
     <SolidColorBrush x:Key="MenuButton_RemoveNormals" Color="#FAA" />
     <SolidColorBrush x:Key="MenuButton_ChangeVerticesOrder" Color="#FAA" />

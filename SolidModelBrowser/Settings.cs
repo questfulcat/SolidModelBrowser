@@ -91,12 +91,22 @@ namespace SolidModelBrowser
         [PropertyInfo(Category = "Interface", Description = "Show XYZ axes lines")]
         public bool IsAxesEnabled { get; set; } = false;
 
+        [PropertyInfo(Category = "Interface", Description = "Show ground plane")]
+        public bool IsGroundEnabled { get; set; } = false;
+
 
         [PropertyInfo(Category = "Camera", Description = "Camera field of view angle")]
         public double FOV { get; set; } = 45.0;
 
         [PropertyInfo(Category = "Camera", Description = "Camera field of view angle in fish eye mode")]
         public double FishEyeFOV { get; set; } = 120.0;
+
+        [PropertyInfo(Category = "Camera", Description = "Camera basic shift from model in units relative to model overall size")]
+        public double CameraInitialShift { get; set; } = 2.0;
+
+
+        [PropertyInfo(Category = "Model", Description = "Model rotation angle: 45/90 deg options allowed")]
+        public double ModelRotationAngle { get; set; } = 90.0;
 
 
         string defPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "settings.ini");
