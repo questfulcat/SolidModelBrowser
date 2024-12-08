@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace SolidModelBrowser
@@ -10,6 +11,8 @@ namespace SolidModelBrowser
         public ImportSTL()
         {
             Extensions = new List<string> { "stl" };
+            ExtensionsColors = new Dictionary<string, SolidColorBrush> { { "stl", new SolidColorBrush(Color.FromRgb(220, 220, 150)) } };
+            ExtensionsColorsLight = new Dictionary<string, SolidColorBrush> { { "stl", new SolidColorBrush(Color.FromRgb(120, 120, 20)) } };
         }
 
         char[] separator = { ' ' };

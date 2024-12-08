@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace SolidModelBrowser
@@ -16,6 +17,8 @@ namespace SolidModelBrowser
 
         // extensions should be in lower case
         public List<string> Extensions { get; protected set; } = new List<string>();
+        public Dictionary<string, SolidColorBrush> ExtensionsColors { get; protected set; } = new Dictionary<string, SolidColorBrush>();
+        public Dictionary<string, SolidColorBrush> ExtensionsColorsLight { get; protected set; } = new Dictionary<string, SolidColorBrush>();
         public bool InitialXRotationNeeded { get; protected set; } = false;
 
         public abstract void Load(string filename);

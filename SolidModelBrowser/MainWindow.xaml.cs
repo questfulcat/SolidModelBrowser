@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -12,7 +13,7 @@ namespace SolidModelBrowser
 {
     public partial class MainWindow : Window
     {
-        const string version = "0.3";
+        const string version = "0.3.1";
         Point3D modelCenter = new Point3D();
         Vector3D modelSize = new Vector3D();
 
@@ -385,6 +386,17 @@ namespace SolidModelBrowser
         {
             if (settings.LightTheme) App.SetTheme("ColorsLight.xaml");
             else App.SetTheme("Colors.xaml");
+
+            filePanel.ExtensionsColors.Clear();
+            if (settings.ColorizeFiles)
+            {
+                foreach (Import importer in imports)
+                {
+                    var srcdict = settings.LightTheme ? importer.ExtensionsColorsLight : importer.ExtensionsColors;
+                    foreach (var src in srcdict) filePanel.ExtensionsColors.Add(src.Key, src.Value);
+                }
+                filePanel.Refresh();
+            }
         }
 
 

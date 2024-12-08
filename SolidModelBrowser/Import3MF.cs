@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace SolidModelBrowser
@@ -15,6 +15,8 @@ namespace SolidModelBrowser
         public Import3MF()
         {
             Extensions = new List<string> { "3mf" };
+            ExtensionsColors = new Dictionary<string, SolidColorBrush> { { "3mf", new SolidColorBrush(Color.FromRgb(255, 150, 150)) } };
+            ExtensionsColorsLight = new Dictionary<string, SolidColorBrush> { { "3mf", new SolidColorBrush(Color.FromRgb(200, 50, 50)) } };
             InitialXRotationNeeded = false;
         }
 
@@ -127,19 +129,27 @@ namespace SolidModelBrowser
             return t;
         }
 
+        int countLines(string s)
+        {
+            int r = 0;
+            //for(int c = 0; c < s.Length; c++) if (s[c] == '\n') ++r;
+            foreach(char c in s) if (c == '\n') ++r;
+            return r;
+        }
+
         int basepos = 0;
         long pr_len, pr_avglinelen, pr_pos;
         void initProgress(string data)
         {
             pr_len = data.Length;
-            pr_avglinelen = Regex.Match(data, "^.*?<vertex.*?$", RegexOptions.Multiline).Length;
+            pr_avglinelen = data.Length / countLines(data);// Regex.Match(data, "^.*?<triangle.*?$", RegexOptions.Multiline).Length;
             pr_pos = 0;
         }
 
         void appendProgress(string data)
         {
             pr_len += data.Length;
-            pr_avglinelen = Regex.Match(data, "^.*?<vertex.*?$", RegexOptions.Multiline).Length;
+            pr_avglinelen = data.Length / countLines(data);// Regex.Match(data, "^.*?<triangle.*?$", RegexOptions.Multiline).Length;
         }
 
         void stepProgress()
@@ -169,31 +179,40 @@ namespace SolidModelBrowser
                 Indices.Add(t.Value.v2 + basepos);
                 Indices.Add(t.Value.v3 + basepos);
 
-                //Vector3D n1 = Positions[t.Value.v3 + basepos] - Positions[t.Value.v2 + basepos];
-                //Vector3D n2 = Positions[t.Value.v1 + basepos] - Positions[t.Value.v2 + basepos];
-                //Vector3D n = Vector3D.CrossProduct(n1, n2);
-                //n.Normalize();
-                //Normals.Add(n);
-                //Normals.Add(n);
-                //Normals.Add(n);
-
                 stepProgress();
                 if (StopFlag) return;
             }
             basepos = Positions.Count;
         }
 
-        void loadComponent(string comp, ZipArchive zfile, Matrix3D basemtr)
+
+        Dictionary<string, List<string>> componentCache = new Dictionary<string, List<string>>();
+
+        void loadComponent(string comp, string model, ZipArchive zfile, Matrix3D basemtr)
         {
             string id = getParam(comp, "objectid");
             string path = getParam(comp, "p:path").TrimStart('/').ToLower();
             string tr = getParam(comp, "transform");
             Matrix3D mtr = buildMatrix(tr) * basemtr;
-            
-            string model = readZipEntry(zfile, path);
 
-            string resources = getTag(model, "resources", false);
-            var objects = getTags(resources, "object", false);
+            string resources;
+            List<string> objects;
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                if (componentCache.ContainsKey(path)) objects = componentCache[path];
+                else
+                {
+                    model = readZipEntry(zfile, path);
+                    resources = getTag(model, "resources", false);
+                    objects = getTags(resources, "object", false);
+                    componentCache.Add(path, objects);
+                }
+            }
+            else // if no path specified use local model
+            {
+                resources = getTag(model, "resources", false);
+                objects = getTags(resources, "object", false);
+            }
 
             string obj = objects.Where(o => o.Contains($" id=\"{id}\"")).FirstOrDefault();
 
@@ -231,7 +250,7 @@ namespace SolidModelBrowser
                     if (components != null)
                     {
                         var comps = getTags(components, "component", true);
-                        foreach (var comp in comps) loadComponent(comp, zfile, mtr);
+                        foreach (var comp in comps) loadComponent(comp, model, zfile, mtr);
                     }
 
                     parseMesh(obj, mtr);

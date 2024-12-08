@@ -148,13 +148,20 @@ namespace SolidModelBrowser
 
             string[] files = Directory.GetFiles(path);
             for (int c = 0; c < files.Length; c++)
-                if (extensions.Contains(System.IO.Path.GetExtension(files[c]).Trim('.').ToLower()) || !UseExtensionFilter)
+            {
+                string ext = System.IO.Path.GetExtension(files[c]).Trim('.').ToLower();
+                if (extensions.Contains(ext) || !UseExtensionFilter)
                 {
                     TextBlock t = new TextBlock();
+                    if (extensionsColors.ContainsKey(ext)) t.Foreground = extensionsColors[ext];
+                    //if (ext == "3mf") t.Foreground = new SolidColorBrush(Color.FromRgb(255, 200, 200));
+                    //if (ext == "stl") t.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 200));
+                    //if (ext == "obj") t.Foreground = new SolidColorBrush(Color.FromRgb(200, 200, 255));
                     t.Text = System.IO.Path.GetFileName(files[c]);
                     t.Tag = files[c];
                     listBoxFiles.Items.Add(t);
                 }
+            }
 
             if (keepSelectedItem)
             {
@@ -226,7 +233,7 @@ namespace SolidModelBrowser
 
         public bool UseExtensionFilter { get; set; } = true;
 
-        List<string> extensions = new List<string> { "avi" };
+        List<string> extensions = new List<string>();
         public List<string> Extensions
         {
             get
@@ -236,6 +243,20 @@ namespace SolidModelBrowser
             set
             {
                 extensions = value;
+                fill(true);
+            }
+        }
+
+        Dictionary<string, SolidColorBrush> extensionsColors = new Dictionary<string, SolidColorBrush>();
+        public Dictionary<string, SolidColorBrush> ExtensionsColors
+        {
+            get
+            {
+                return extensionsColors;
+            }
+            set
+            {
+                extensionsColors = value;
                 fill(true);
             }
         }

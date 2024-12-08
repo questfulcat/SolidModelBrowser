@@ -94,6 +94,9 @@ namespace SolidModelBrowser
         [PropertyInfo(Category = "Interface", Description = "Show ground plane")]
         public bool IsGroundEnabled { get; set; } = false;
 
+        [PropertyInfo(Category = "Interface", Description = "Use different colors for files in panel depending on file extensions")]
+        public bool ColorizeFiles { get; set; } = true;
+
 
         [PropertyInfo(Category = "Camera", Description = "Camera field of view angle")]
         public double FOV { get; set; } = 45.0;

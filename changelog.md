@@ -1,13 +1,18 @@
 # Solid Model Browser, change log
 
+## v0.3.1 (08.12.2024)
+
+- 3MF import compatibility improvements
+- Different colors for files of different types in file panel 
+
 ## v0.3 (25.10.2024)
 
 - 3MF with components import added (extended 3MF support)
-- Reset meshes smooth structure to flat (button on tool panel)
+- Tool to reset meshes smooth structure to flat (button on tool panel)
 - Camera front, back, top, bottom, left, right view positions added (hotkeys)
 - Camera initial shift from model setting added
 - Model rotation angle 45/90 deg setting added
-- Ground plane option added
+- Ground plane added (tool panel)
 - [F1] help page added
 - 3MF import, no transform matrix for object bugfix
 - interface updates

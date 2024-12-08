@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace SolidModelBrowser
@@ -10,6 +11,8 @@ namespace SolidModelBrowser
         public ImportOBJ()
         {
             Extensions = new List<string> { "obj" };
+            ExtensionsColors = new Dictionary<string, SolidColorBrush> { { "obj", new SolidColorBrush(Color.FromRgb(200, 200, 255)) } };
+            ExtensionsColorsLight = new Dictionary<string, SolidColorBrush> { { "obj", new SolidColorBrush(Color.FromRgb(50, 50, 100)) } };
             InitialXRotationNeeded = true;
         }
 
