@@ -111,7 +111,7 @@ namespace SolidModelBrowser
         {
             if (mesh.TriangleIndices == null || mesh.TriangleIndices.Count % 3 != 0) return;
             var v = new Int32Collection(mesh.TriangleIndices.Count);
-            for (int i = 0; i < mesh.TriangleIndices.Count; i+=3)
+            for (int i = 0; i < mesh.TriangleIndices.Count; i += 3)
             {
                 v.Add(mesh.TriangleIndices[i + 1]);
                 v.Add(mesh.TriangleIndices[i]);
@@ -124,7 +124,7 @@ namespace SolidModelBrowser
         {
             var p = new Point3DCollection(mesh.Positions.Count);
             var i = new Int32Collection(mesh.TriangleIndices.Count);
-            for(int c = 0; c < mesh.TriangleIndices.Count; c++)
+            for (int c = 0; c < mesh.TriangleIndices.Count; c++)
             {
                 p.Add(mesh.Positions[mesh.TriangleIndices[c]]);
                 i.Add(c);
@@ -132,6 +132,93 @@ namespace SolidModelBrowser
             mesh.Positions = p;
             mesh.TriangleIndices = i;
             mesh.Normals.Clear();
+        }
+
+        public static Vector3D Norm(this Vector3D v) { v.Normalize(); return v; }
+
+        public static void ConvertToWireframe(MeshGeometry3D mesh, double edgeScale)
+        {
+            RecreateUnsmoothed(mesh);
+            var p = new Point3DCollection(mesh.Positions.Count * 3);
+            var i = new Int32Collection(mesh.TriangleIndices.Count * 3);
+            int iq = 0;
+            for (int c = 0; c < mesh.Positions.Count; c += 3)
+            {
+                Point3D p1 = mesh.Positions[c], p2 = mesh.Positions[c + 1], p3 = mesh.Positions[c + 2];
+                p.Add(p1);
+                p.Add(p2);
+                p.Add((Point3D)(p2 + (p3 - p2) * edgeScale));
+                i.Add(iq++);
+                i.Add(iq++);
+                i.Add(iq++);
+
+                p.Add(p2);
+                p.Add(p3);
+                p.Add((Point3D)(p3 + (p1 - p3) * edgeScale));
+                i.Add(iq++);
+                i.Add(iq++);
+                i.Add(iq++);
+
+                p.Add(p3);
+                p.Add(p1);
+                p.Add((Point3D)(p1 + (p2 - p1) * edgeScale));
+                i.Add(iq++);
+                i.Add(iq++);
+                i.Add(iq++);
+            }
+            mesh.Positions = p;
+            mesh.TriangleIndices = i;
+        }
+
+        public static void ConvertToVertexframe(MeshGeometry3D mesh, double vertexScale)
+        {
+            RecreateUnsmoothed(mesh);
+            var p = new Point3DCollection(mesh.Positions.Count * 3);
+            var i = new Int32Collection(mesh.TriangleIndices.Count * 3);
+            int iq = 0;
+            for (int c = 0; c < mesh.Positions.Count; c += 3)
+            {
+                Point3D p1 = mesh.Positions[c], p2 = mesh.Positions[c + 1], p3 = mesh.Positions[c + 2];
+                p.Add(p1);
+                p.Add((Point3D)(p1 + (p2 - p1).Norm() * vertexScale));
+                p.Add((Point3D)(p1 + (p3 - p1).Norm() * vertexScale));
+                i.Add(iq++);
+                i.Add(iq++);
+                i.Add(iq++);
+
+                p.Add(p2);
+                p.Add((Point3D)(p2 + (p1 - p2).Norm() * vertexScale));
+                p.Add((Point3D)(p2 + (p3 - p2).Norm() * vertexScale));
+                i.Add(iq++);
+                i.Add(iq++);
+                i.Add(iq++);
+
+                p.Add(p3);
+                p.Add((Point3D)(p3 + (p1 - p3).Norm() * vertexScale));
+                p.Add((Point3D)(p3 + (p2 - p3).Norm() * vertexScale));
+                i.Add(iq++);
+                i.Add(iq++);
+                i.Add(iq++);
+            }
+            mesh.Positions = p;
+            mesh.TriangleIndices = i;
+        }
+
+        static Point3DCollection storedMeshPositions;
+        static Int32Collection storedMeshTriangles;
+        static Vector3DCollection storedMeshNormals;
+        public static void StoreMesh(MeshGeometry3D mesh)
+        {
+            storedMeshPositions = mesh.Positions;
+            storedMeshTriangles = mesh.TriangleIndices;
+            storedMeshNormals = mesh.Normals;
+        }
+
+        public static void RestoreMesh(MeshGeometry3D mesh)
+        {
+            mesh.Positions = storedMeshPositions;
+            mesh.TriangleIndices = storedMeshTriangles;
+            mesh.Normals = storedMeshNormals;
         }
 
         public static double MinMax(this double value, double min, double max)

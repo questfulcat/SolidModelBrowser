@@ -28,6 +28,7 @@ F, H - Set Camera at model left/right view
 O - Show/hide XYZ axes
 P - Show/hide ground polygon
 CTRL+F - Recreate smooth mesh in flat mode (flat polygon lighting)
+CTRL+W - Wireframe mode
 I - show/hide model info
 LeftShift - hold left shift to drag window by viewport
 

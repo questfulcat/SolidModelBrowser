@@ -1,5 +1,13 @@
 # Solid Model Browser, change log
 
+## v0.4 (23.12.2024)
+
+- PLY format import added (ASCII and Binary little-endian)
+- Wireframe mode implemented
+- WireframeEdgeScale setting added
+- IgnoreOriginalNormals setting added, to skip normals if there are a lot files with broken or incorrect normals in user library
+- UnsmoothAfterLoading setting added, to load all models in flat mode
+
 ## v0.3.1 (08.12.2024)
 
 - 3MF import compatibility improvements

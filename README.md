@@ -1,6 +1,6 @@
 # Solid Model Browser
 
-This app is viewer for STL, OBJ, 3MF files.
+This app is viewer for STL, 3MF, OBJ, PLY files.
 User can select files in left file panel and observe it's 3D content.
 
 ![cover01](https://github.com/user-attachments/assets/c996f67c-7100-4a8b-92c1-af75fd2d44bb)
@@ -19,7 +19,7 @@ Build project with Visual Studio 2022
 
 ## Features
 
-- Open binary and ASCII STL files, load main 3Dmodel from 3MF files (CURA projects), partial support for OBJ files with triangle faces
+- Open binary and ASCII STL files, load main 3Dmodel from 3MF files (CURA projects), partial support for OBJ files with triangle faces, PLY (ASCII and binary little-endian)
 
 - Fly camera around model
 

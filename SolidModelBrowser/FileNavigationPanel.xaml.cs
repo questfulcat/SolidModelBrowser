@@ -53,7 +53,12 @@ namespace SolidModelBrowser
         private void ListBoxFiles_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             DependencyObject temp = (DependencyObject)e.OriginalSource;
-            while ((temp = VisualTreeHelper.GetParent(temp)) != null) if (temp is ListBoxItem) TryEnterSelectedFolder();
+            while ((temp = VisualTreeHelper.GetParent(temp)) != null)
+                if (temp is ListBoxItem)
+                {
+                    TryEnterSelectedFolder();
+                    e.Handled = true;
+                }
         }
 
         bool dontRaiseSelectionChanged = false;

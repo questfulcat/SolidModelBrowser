@@ -111,6 +111,16 @@ namespace SolidModelBrowser
         [PropertyInfo(Category = "Model", Description = "Model rotation angle: 45/90 deg options allowed")]
         public double ModelRotationAngle { get; set; } = 90.0;
 
+        [PropertyInfo(Category = "Model", Description = "Wireframe mode edge scaling factor 0.001...0.9")]
+        public double WireframeEdgeScale { get; set; } = 0.03;
+
+        [PropertyInfo(Category = "Model", Description = "Skip loading models original normals")]
+        public bool IgnoreOriginalNormals { get; set; } = false;
+
+        [PropertyInfo(Category = "Model", Description = "Convert smoothed models to flat automatically")]
+        public bool UnsmoothAfterLoading { get; set; } = false;
+
+
 
         string defPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "settings.ini");
 

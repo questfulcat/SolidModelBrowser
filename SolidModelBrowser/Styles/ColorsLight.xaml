@@ -151,10 +151,11 @@
     <SolidColorBrush x:Key="MenuButton_FishEyeFOV" Color="#44A" />
     <SolidColorBrush x:Key="MenuButton_Axes" Color="#444" />
     <SolidColorBrush x:Key="MenuButton_Ground" Color="#449" />
-    <SolidColorBrush x:Key="MenuButton_RecreateUnsmoothed" Color="#A44" />
     <SolidColorBrush x:Key="MenuButton_SwapNormals" Color="#A44" />
     <SolidColorBrush x:Key="MenuButton_RemoveNormals" Color="#A44" />
     <SolidColorBrush x:Key="MenuButton_ChangeVerticesOrder" Color="#A44" />
+    <SolidColorBrush x:Key="MenuButton_RecreateUnsmoothed" Color="#A44" />
+    <SolidColorBrush x:Key="MenuButton_Wireframe" Color="#444" />
     <SolidColorBrush x:Key="MenuButton_ShowInfo" Color="#44A" />
     <SolidColorBrush x:Key="MenuButton_Settings" Color="#664" />
 

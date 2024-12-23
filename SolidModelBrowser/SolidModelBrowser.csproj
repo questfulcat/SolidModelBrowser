@@ -67,19 +67,20 @@
       <DependentUpon>FileNavigationPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="HelpString.cs" />
-    <Compile Include="Import.cs" />
-    <Compile Include="Import3MF.cs" />
-    <Compile Include="ImportOBJ.cs" />
-    <Compile Include="ImportSTL.cs" />
+    <Compile Include="Imports\Import.cs" />
+    <Compile Include="Imports\Import3MF.cs" />
+    <Compile Include="Imports\ImportOBJ.cs" />
+    <Compile Include="Imports\ImportPLY.cs" />
+    <Compile Include="Imports\ImportSTL.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TextEncodedImage.cs" />
     <Compile Include="UCamera.cs" />
     <Compile Include="Utils.cs" />
-    <Page Include="Colors.xaml">
+    <Page Include="Styles\Colors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ColorsLight.xaml">
+    <Page Include="Styles\ColorsLight.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -99,7 +100,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Styles.xaml">
+    <Page Include="Styles\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

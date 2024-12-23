@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -13,7 +13,7 @@ namespace SolidModelBrowser
 {
     public partial class MainWindow : Window
     {
-        const string version = "0.3.1";
+        const string version = "0.4";
         Point3D modelCenter = new Point3D();
         Vector3D modelSize = new Vector3D();
 
@@ -23,7 +23,7 @@ namespace SolidModelBrowser
 
         DispatcherTimer loadingTimer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 100), IsEnabled = false };
 
-        List<Import> imports = new List<Import>() { new ImportSTL(), new Import3MF(), new ImportOBJ() };
+        List<Import> imports = new List<Import>() { new ImportSTL(), new Import3MF(), new ImportOBJ(), new ImportPLY() };
         Import currentImport = null;
 
         Settings settings = new Settings();
@@ -49,8 +49,6 @@ namespace SolidModelBrowser
             tempForGround = ground;
             modelgroup.Children.Remove(ground);
 
-            showInfo($"Solid Model Browser v {version}\r\nSTL, OBJ, 3MF formats supported\r\n\r\nquestfulcat 2024 (C)\r\nhttps://github.com/questfulcat/solidmodelbrowser\r\nDistributed under MIT License\r\n\r\nF1 - keymap help");
-
             loadingTimer.Tick += LoadingTimer_Tick;
 
             loadSettings();
@@ -64,6 +62,7 @@ namespace SolidModelBrowser
             var args = Environment.GetCommandLineArgs();
             if (args.Length == 2 && File.Exists(args[1]) && selectImporter(args[1])) loadFile(args[1]);
 
+            showInfo($"Solid Model Browser v {version}\r\nSTL, OBJ, 3MF, PLY formats supported\r\n\r\nquestfulcat 2024 (C)\r\nhttps://github.com/questfulcat/solidmodelbrowser\r\nDistributed under MIT License\r\n\r\nF1 - keymap help");
         }
 
         void saveSettings()
@@ -125,6 +124,7 @@ namespace SolidModelBrowser
             settings.FishEyeFOV = Utils.MinMax(settings.FishEyeFOV, 5.0, 160.0);
             settings.CameraInitialShift = Utils.MinMax(settings.CameraInitialShift, 0.5, 10.0);
             settings.ModelRotationAngle = Utils.SelectInRange(settings.ModelRotationAngle, new double[] {45.0, 90.0}, 90.0);
+            settings.WireframeEdgeScale = Utils.MinMax(settings.WireframeEdgeScale, 0.001, 0.9);
 
             updateCameraModes();
             updateAxes();
@@ -153,11 +153,13 @@ namespace SolidModelBrowser
                     return;
                 }
 
+                if (settings.IgnoreOriginalNormals) Import.Normals.Clear();
                 Utils.FillMesh(mesh);
                 Utils.GetModelCenterAndSize(mesh, out modelCenter, out modelSize);
                 camera.LookCenter = modelCenter;
                 camera.DefaultPosition(modelSize.Length, settings.CameraInitialShift);
-                //Utils.RecreateUnsmoothed(mesh);
+                
+                if (settings.UnsmoothAfterLoading) Utils.RecreateUnsmoothed(mesh);
 
                 if (currentImport.InitialXRotationNeeded) addRotation(Axis.X, 90.0);
 
@@ -309,6 +311,7 @@ namespace SolidModelBrowser
             if (CAS == "C") // CTRL
             {
                 if (e.Key == Key.F) Utils.RecreateUnsmoothed(mesh);
+                if (e.Key == Key.W) { ButtonWireframe.IsChecked = !ButtonWireframe.IsChecked; Wireframe(); }
             }
         }
         
@@ -319,6 +322,7 @@ namespace SolidModelBrowser
             mesh.Normals.Clear();
             transform.Children.Clear();
             hideInfo();
+            ButtonWireframe.IsChecked = false;
         }
 
         void showModelInfo()
@@ -499,6 +503,21 @@ namespace SolidModelBrowser
         private void ButtonRecreateUnsmoothed_Click(object sender, RoutedEventArgs e)
         {
             Utils.RecreateUnsmoothed(mesh);
+        }
+
+        void Wireframe()
+        {
+            if (ButtonWireframe.IsChecked.Value)
+            {
+                Utils.StoreMesh(mesh);
+                Utils.ConvertToWireframe(mesh, settings.WireframeEdgeScale);
+            }
+            else Utils.RestoreMesh(mesh);
+        }
+
+        private void ButtonWireframe_Click(object sender, RoutedEventArgs e)
+        {
+            Wireframe();
         }
 
         private void ButtonRemoveNormals_Click(object sender, RoutedEventArgs e)

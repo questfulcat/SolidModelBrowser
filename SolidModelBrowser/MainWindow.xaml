@@ -159,7 +159,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <WrapPanel Grid.Column="0" DockPanel.Dock="Left">
+                    <WrapPanel Grid.Column="0" DockPanel.Dock="Left" Margin="0,0,50,0">
                         <Button ToolTip="Reload model and reset camera [F5]" Click="ButtonReloadModel_Click" Width="30" Height="30">
                             <local:TextEncodedImage EncodedImage="?OO???O??K?of?qOOCGC?A@_O?GC?A@a_oCO}??B?_????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ReloadModel}"></local:TextEncodedImage>
                         </Button>
@@ -222,6 +222,10 @@
                         <Button ToolTip="Recreate unsmoothed [CTRL+F]&#x0d;&#x0a;If model structure is smoothed it regenerate model to flat mode&#x0d;&#x0a;It might change polygons lighting" Click="ButtonRecreateUnsmoothed_Click" Width="30" Height="30">
                             <local:TextEncodedImage EncodedImage="0@@0004@P3>la74@014@014@014000lO0n30O0P30@0000" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_RecreateUnsmoothed}"></local:TextEncodedImage>
                         </Button>
+                        <Rectangle Width="2" Fill="{DynamicResource Separator}" />
+                        <ToggleButton ToolTip="Wireframe model [CTRL+W]" Click="ButtonWireframe_Click" Width="30" Height="30" x:Name="ButtonWireframe">
+                            <local:TextEncodedImage EncodedImage="0@@000010h00E0890A484211ioo4442Q0A4PT0@50h0040" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Wireframe}"></local:TextEncodedImage>
+                        </ToggleButton>
                         <Rectangle Width="2" Fill="{DynamicResource Separator}" />
                         <ToggleButton ToolTip="Show model info [I]" Click="ButtonShowModelInfo_Click" Width="30" Height="30" x:Name="ButtonShowModelInfo">
                             <local:TextEncodedImage EncodedImage="?OO???oB?e@_X??B?ZAwu@N{oZN{oB~~o~Nw~@{N?}@???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ShowInfo}"></local:TextEncodedImage>

@@ -18,11 +18,11 @@ namespace SolidModelBrowser
             Current.Resources.Clear();
 
             ResourceDictionary rdColors = new ResourceDictionary();
-            rdColors.Source = new Uri("pack://application:,,,/SolidModelBrowser;component/" + theme);
+            rdColors.Source = new Uri("pack://application:,,,/SolidModelBrowser;component/Styles/" + theme);
             Current.Resources.MergedDictionaries.Add(rdColors);
 
             ResourceDictionary rdStyles = new ResourceDictionary();
-            rdStyles.Source = new Uri("pack://application:,,,/SolidModelBrowser;component/Styles.xaml");
+            rdStyles.Source = new Uri("pack://application:,,,/SolidModelBrowser;component/Styles/Styles.xaml");
             Current.Resources.MergedDictionaries.Add(rdStyles);
         }
     }
