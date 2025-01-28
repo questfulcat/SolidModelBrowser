@@ -31,42 +31,42 @@ namespace SolidModelBrowser
         [PropertyInfo(Category = "Main Window", Description = "Max Window width, set 0 for screen limit")]
         public double MaxWidth { get; set; } = 0;
 
-        [PropertyInfo(Category = "Main Window", Description = "Max Window height, set 0 for screen limit\r\n# this option is to manually limit window on non primary displays")]
+        [PropertyInfo(Category = "Main Window", Description = "Max Window height, set 0 for screen limit\r\nthis option is to manually limit window on non primary displays")]
         public double MaxHeight { get; set; } = 0;
 
         [PropertyInfo(Category = "Main Window", Description = "Width of file panel")]
         public double FilePanelWidth { get; set; } = 200;
 
-        [PropertyInfo(Category = "Main Window", Description = "Opacity of file panel when it is not in use")]
+        [PropertyInfo(Category = "Main Window", Description = "Opacity of file panel when it is not in use", MenuLabel = "File panel idle opacity", Min = 0.0, Max = 1.0, Increment = 0.1)]
         public double FilePanelIdleOpacity { get; set; } = 0.2;
 
 
-        [PropertyInfo(Category = "Utils", Description = "External application to open current viewed file")]
+        [PropertyInfo(Category = "Utils", Description = "External application to open current viewed file", MenuLabel = "External Application")]
         public string ExternalApp { get; set; } = "";
 
-        [PropertyInfo(Category = "Utils", Description = "External application command line arguments\r\n# Variable $file$ = current filename")]
+        [PropertyInfo(Category = "Utils", Description = "External application command line arguments\r\nVariable $file$ = current filename", MenuLabel = "External Application Arguments")]
         public string ExternalAppArguments { get; set; } = "$file$";
 
         [PropertyInfo(Category = "Utils", Description = "Last selected path in file panel")]
         public string SelectedPath { get; set; } = @"c:\";
 
-        [PropertyInfo(Category = "Utils", Description = "DPI to render image before save to file")]
+        [PropertyInfo(Category = "Utils", Description = "DPI to render image before save to file", MenuLabel = "Save image DPI")]
         public int SaveImageDPI { get; set; } = 600;
 
 
-        [PropertyInfo(Category = "Materials", Description = "Model diffuse color ARGB")]
-        public SColor DiffuseColor { get; set; } = new SColor("#FFFFFF00");// Color.FromArgb(255, 255, 255, 0);
+        [PropertyInfo(Category = "Materials", Description = "Model diffuse color ARGB", MenuLabel = "Diffuse color")]
+        public SColor DiffuseColor { get; set; } = new SColor("#FFFFFF00");
 
-        [PropertyInfo(Category = "Materials", Description = "Model specular color ARGB")]
-        public SColor SpecularColor { get; set; } = new SColor("#FFDCDCDC");// Color.FromArgb(255, 220, 220, 220);
+        [PropertyInfo(Category = "Materials", Description = "Model specular color ARGB", MenuLabel = "Specular color")]
+        public SColor SpecularColor { get; set; } = new SColor("#FFDCDCDC");
 
-        [PropertyInfo(Category = "Materials", Description = "Model emissive color ARGB")]
-        public SColor EmissiveColor { get; set; } = new SColor("#FF000040");// Color.FromArgb(255, 0, 0, 64);
+        [PropertyInfo(Category = "Materials", Description = "Model emissive color ARGB", MenuLabel = "Emissive color")]
+        public SColor EmissiveColor { get; set; } = new SColor("#FF000040");
 
-        [PropertyInfo(Category = "Materials", Description = "Model backside diffuse color ARGB")]
-        public SColor BackDiffuseColor { get; set; } = new SColor("#FFFF0000");// Color.FromArgb(255, 255, 0, 0);
+        [PropertyInfo(Category = "Materials", Description = "Model backside diffuse color ARGB", MenuLabel = "Inner diffuse color")]
+        public SColor BackDiffuseColor { get; set; } = new SColor("#FFFF0000");
 
-        [PropertyInfo(Category = "Materials", Description = "Value that specifies the degree to which a material applied to a 3-D model reflects the lighting model as shine")]
+        [PropertyInfo(Category = "Materials", Description = "Value that specifies the degree to which a material applied to a 3-D model reflects the lighting model as shine", MenuLabel = "Specular power", Min = 0.0, Max = 10000.0)]
         public double SpecularPower { get; set; } = 40.0;
 
         [PropertyInfo(Category = "Materials", Description = "Diffuse material is enabled")]
@@ -94,70 +94,52 @@ namespace SolidModelBrowser
         [PropertyInfo(Category = "Interface", Description = "Show ground plane")]
         public bool IsGroundEnabled { get; set; } = false;
 
-        [PropertyInfo(Category = "Interface", Description = "Use different colors for files in panel depending on file extensions")]
+        [PropertyInfo(Category = "Interface", Description = "Use different colors for files in panel depending on file extensions", MenuLabel = "Different colors for files")]
         public bool ColorizeFiles { get; set; } = true;
 
+        [PropertyInfo(Category = "Interface", Description = "Sort files by extensions in filepanel", MenuLabel = "Sort files by extensions")]
+        public bool SortFilesByExtensions { get; set; } = false;
 
-        [PropertyInfo(Category = "Camera", Description = "Camera field of view angle")]
+
+        [PropertyInfo(Category = "Camera", Description = "Camera field of view angle", MenuLabel = "Normal FOV", Min = 5.0, Max = 160.0)]
         public double FOV { get; set; } = 45.0;
 
-        [PropertyInfo(Category = "Camera", Description = "Camera field of view angle in fish eye mode")]
+        [PropertyInfo(Category = "Camera", Description = "Camera field of view angle in fish eye mode", MenuLabel = "FOV in fish eye mode", Min = 5.0, Max = 160.0)]
         public double FishEyeFOV { get; set; } = 120.0;
 
-        [PropertyInfo(Category = "Camera", Description = "Camera basic shift from model in units relative to model overall size")]
+        [PropertyInfo(Category = "Camera", Description = "Camera basic shift from model in units relative to model overall size", MenuLabel = "Initial shift", Min = 0.5, Max = 10.0)]
         public double CameraInitialShift { get; set; } = 2.0;
+
+        [PropertyInfo(Category = "Camera", Description = "Default camera look at model points average or geometric center", MenuLabel = "Default camera look at points average center")]
+        public bool DefaultLookAtModelPointsAvgCenter { get; set; } = true;
+
 
 
         [PropertyInfo(Category = "Model", Description = "Model rotation angle: 45/90 deg options allowed")]
         public double ModelRotationAngle { get; set; } = 90.0;
 
-        [PropertyInfo(Category = "Model", Description = "Wireframe mode edge scaling factor 0.001...0.9")]
+        [PropertyInfo(Category = "Model", Description = "Wireframe mode edge scaling factor 0.001...0.9", MenuLabel = "Wireframe edge scale", Min = 0.001, Max = 0.9, Increment = 0.01)]
         public double WireframeEdgeScale { get; set; } = 0.03;
 
-        [PropertyInfo(Category = "Model", Description = "Skip loading models original normals")]
+        [PropertyInfo(Category = "Model", Description = "Skip loading models original normals", MenuLabel = "Skip load normals")]
         public bool IgnoreOriginalNormals { get; set; } = false;
 
-        [PropertyInfo(Category = "Model", Description = "Convert smoothed models to flat automatically")]
+        [PropertyInfo(Category = "Model", Description = "Convert smoothed models to flat automatically", MenuLabel = "Unsmooth after loading")]
         public bool UnsmoothAfterLoading { get; set; } = false;
 
 
 
         string defPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "settings.ini");
 
-        class PropertyInfoAttribute : Attribute
-        {
-            public string Category { get; set; }
-            public string Description { get; set; }
-        }
+        
 
 
         // --- Save ---
 
-        class PropInfo
-        {
-            public string Category;
-            public string Name;
-            public object Value;
-            public string Description;
-        }
-
-        List<PropInfo> getPropInfoList(object obj, bool sort)
-        {
-            List<PropInfo> pi = new List<PropInfo>();
-            var props = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var p in props)
-            {
-                var attr = p.GetCustomAttributes(true).OfType<PropertyInfoAttribute>().FirstOrDefault();
-                pi.Add(new PropInfo() { Name = p.Name, Value = p.GetValue(this, null), Category = attr?.Category ?? "All", Description = attr?.Description });
-            }
-            if (sort) pi.Sort((a, b) => string.Compare(a.Category + a.Name, b.Category + b.Name));
-            return pi;
-        }
-
         public void Save() => Save(defPath, true);
         public void Save(string filename, bool writeDescriptions)
         {
-            var pi = getPropInfoList(this, true);
+            var pi = PropertyInfoAttribute.GetPropertiesInfoList(this, true);
             List<string> lines = new List<string>();
 
             string currentCatName = null;
@@ -171,7 +153,7 @@ namespace SolidModelBrowser
                 }
                 if (p.Value != null)
                 {
-                    if (writeDescriptions && p.Description != null) lines.Add("# " + p.Description);
+                    if (writeDescriptions && p.Description != null) lines.Add("# " + p.Description.Replace("\r\n", "\r\n# "));
                     lines.Add($"{p.Name}={escape(p.Value.ToString())}");
                 }
             }
@@ -245,10 +227,12 @@ namespace SolidModelBrowser
         public void StartProcess() => System.Diagnostics.Process.Start(defPath);
     }
 
+
     public class SColor
     {
         public Color Color { get; set; }
         public SColor(string s) => this.Parse(s);
+        public SColor(Color c) => Color = c;
         public override string ToString() => Color.ToString();
         public void Parse(string s) => Color = (Color)ColorConverter.ConvertFromString(s);
     }

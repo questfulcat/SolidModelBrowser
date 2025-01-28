@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -32,6 +36,40 @@ namespace SolidModelBrowser
             Normals.Clear();
             Positions.Clear();
             Indices.Clear();
+        }
+
+
+        public static List<Import> Imports = new List<Import>();
+        public static Import CurrentImport = null;
+
+        static Import()
+        {
+            Type thisT = MethodBase.GetCurrentMethod().DeclaringType;
+            var importTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.BaseType != null && t.BaseType == thisT);
+            foreach (var importType in importTypes) Imports.Add((Import)Activator.CreateInstance(importType));
+        }
+
+        public static bool SelectImporter(string filename)
+        {
+            string ext = Path.GetExtension(filename).Trim('.').ToLower();
+            foreach (Import i in Imports)
+                if (i.Extensions.Contains(ext))
+                {
+                    CurrentImport = i;
+                    CurrentImport.Initialize();
+                    return true;
+                }
+            return false;
+        }
+
+        public static void FillColorsDictionary(Dictionary<string, SolidColorBrush> cd, bool lightTheme)
+        {
+            cd.Clear();
+            foreach(var i in Imports)
+            {
+                var d = lightTheme ? i.ExtensionsColorsLight : i.ExtensionsColors;
+                foreach (var c in d) cd.Add(c.Key, c.Value);
+            }
         }
     }
 }

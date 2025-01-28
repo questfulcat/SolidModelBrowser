@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="SolidModelBrowser.ColorSelector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SolidModelBrowser"
+             mc:Ignorable="d">
+    <StackPanel Orientation="Horizontal">
+        <Border x:Name="BorderColorPreview" Width="32" Background="White" CornerRadius="4" BorderThickness="0" /> <!--BorderBrush="{DynamicResource WindowFore}"-->
+        <TextBlock Margin="8,0,2,0">A</TextBlock>
+        <local:NumericBox x:Name="NBAlpha" Value="255" MinValue="0" MaxValue="255" RoundDigits="0"/>
+        <TextBlock Margin="8,0,2,0">R</TextBlock>
+        <local:NumericBox x:Name="NBRed" Value="255" MinValue="0" MaxValue="255" RoundDigits="0"/>
+        <TextBlock Margin="8,0,2,0">G</TextBlock>
+        <local:NumericBox x:Name="NBGreen" Value="255" MinValue="0" MaxValue="255" RoundDigits="0"/>
+        <TextBlock Margin="8,0,2,0">B</TextBlock>
+        <local:NumericBox x:Name="NBBlue" Value="255" MinValue="0" MaxValue="255" RoundDigits="0"/>
+    </StackPanel>
+</UserControl>

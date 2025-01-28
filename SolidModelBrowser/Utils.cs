@@ -1,19 +1,25 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+using System.Windows.Shell;
 
 namespace SolidModelBrowser
 {
     internal static class Utils
     {
-        public static void FillMesh(MeshGeometry3D mesh)
+        public static MeshGeometry3D FillMeshFromImport()
         {
+            var mesh = new MeshGeometry3D();
             // don't try to optimize; mesh and 3Dcollections are single thread; also dont fill mesh objects directly in mesh cos it is too slow
             var normals = new Vector3DCollection(Import.Normals.Count);
             var positions = new Point3DCollection(Import.Positions.Count);
@@ -24,12 +30,21 @@ namespace SolidModelBrowser
             mesh.Normals = normals;
             mesh.Positions = positions;
             mesh.TriangleIndices = indices;
+            return mesh;
         }
 
-        public static void GetModelCenterAndSize(MeshGeometry3D mesh, out Point3D center, out Vector3D size)
+        public static void FillMesh(MeshGeometry3D src, MeshGeometry3D dest)
+        {
+            dest.Positions = src.Positions;
+            dest.Normals = src.Normals;
+            dest.TriangleIndices = src.TriangleIndices;
+        }
+
+        public static void GetModelCenterAndSize(MeshGeometry3D mesh, out Point3D center, out Point3D massCenter, out Vector3D size)
         {
             double minX = double.MaxValue, minY = double.MaxValue, minZ = double.MaxValue;
             double maxX = double.MinValue, maxY = double.MinValue, maxZ = double.MinValue;
+            double massX = 0.0, massY = 0.0, massZ = 0.0;
             foreach (var p in mesh.Positions)
             {
                 double x = p.X, y = p.Y, z = p.Z;
@@ -39,9 +54,12 @@ namespace SolidModelBrowser
                 if (y > maxY) maxY = y;
                 if (z < minZ) minZ = z;
                 if (z > maxZ) maxZ = z;
+                massX += x; massY += y; massZ += z;
             }
             size = new Vector3D(maxX - minX, maxY - minY, maxZ - minZ);
             center = new Point3D((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
+            int q = mesh.Positions.Count;
+            massCenter = new Point3D(massX / q, massY / q, massZ / q);
         }
 
         public static Vector3D GetShiftVectorInNormalSurface(Vector3D v, double dx, double dy)
@@ -120,8 +138,9 @@ namespace SolidModelBrowser
             mesh.TriangleIndices = v;
         }
 
-        public static void RecreateUnsmoothed(MeshGeometry3D mesh)
+        public static MeshGeometry3D UnsmoothMesh(MeshGeometry3D mesh)
         {
+            var r = new MeshGeometry3D();
             var p = new Point3DCollection(mesh.Positions.Count);
             var i = new Int32Collection(mesh.TriangleIndices.Count);
             for (int c = 0; c < mesh.TriangleIndices.Count; c++)
@@ -129,22 +148,25 @@ namespace SolidModelBrowser
                 p.Add(mesh.Positions[mesh.TriangleIndices[c]]);
                 i.Add(c);
             }
-            mesh.Positions = p;
-            mesh.TriangleIndices = i;
-            mesh.Normals.Clear();
+            r.Positions = p;
+            r.TriangleIndices = i;
+            //r.Normals.Clear();
+            return r;
         }
+
+
 
         public static Vector3D Norm(this Vector3D v) { v.Normalize(); return v; }
 
-        public static void ConvertToWireframe(MeshGeometry3D mesh, double edgeScale)
+        public static MeshGeometry3D ConvertToWireframe(MeshGeometry3D src, double edgeScale)
         {
-            RecreateUnsmoothed(mesh);
-            var p = new Point3DCollection(mesh.Positions.Count * 3);
-            var i = new Int32Collection(mesh.TriangleIndices.Count * 3);
+            var dest = UnsmoothMesh(src);
+            var p = new Point3DCollection(dest.Positions.Count * 3);
+            var i = new Int32Collection(dest.TriangleIndices.Count * 3);
             int iq = 0;
-            for (int c = 0; c < mesh.Positions.Count; c += 3)
+            for (int c = 0; c < dest.Positions.Count; c += 3)
             {
-                Point3D p1 = mesh.Positions[c], p2 = mesh.Positions[c + 1], p3 = mesh.Positions[c + 2];
+                Point3D p1 = dest.Positions[c], p2 = dest.Positions[c + 1], p3 = dest.Positions[c + 2];
                 p.Add(p1);
                 p.Add(p2);
                 p.Add((Point3D)(p2 + (p3 - p2) * edgeScale));
@@ -166,60 +188,95 @@ namespace SolidModelBrowser
                 i.Add(iq++);
                 i.Add(iq++);
             }
-            mesh.Positions = p;
-            mesh.TriangleIndices = i;
+            dest.Positions = p;
+            dest.TriangleIndices = i;
+            return dest;
         }
 
-        public static void ConvertToVertexframe(MeshGeometry3D mesh, double vertexScale)
+        //public static void ConvertToVertexframe(MeshGeometry3D mesh, double vertexScale)
+        //{
+        //    RecreateUnsmoothed(mesh);
+        //    var p = new Point3DCollection(mesh.Positions.Count * 3);
+        //    var i = new Int32Collection(mesh.TriangleIndices.Count * 3);
+        //    int iq = 0;
+        //    for (int c = 0; c < mesh.Positions.Count; c += 3)
+        //    {
+        //        Point3D p1 = mesh.Positions[c], p2 = mesh.Positions[c + 1], p3 = mesh.Positions[c + 2];
+        //        p.Add(p1);
+        //        p.Add((Point3D)(p1 + (p2 - p1).Norm() * vertexScale));
+        //        p.Add((Point3D)(p1 + (p3 - p1).Norm() * vertexScale));
+        //        i.Add(iq++);
+        //        i.Add(iq++);
+        //        i.Add(iq++);
+
+        //        p.Add(p2);
+        //        p.Add((Point3D)(p2 + (p1 - p2).Norm() * vertexScale));
+        //        p.Add((Point3D)(p2 + (p3 - p2).Norm() * vertexScale));
+        //        i.Add(iq++);
+        //        i.Add(iq++);
+        //        i.Add(iq++);
+
+        //        p.Add(p3);
+        //        p.Add((Point3D)(p3 + (p1 - p3).Norm() * vertexScale));
+        //        p.Add((Point3D)(p3 + (p2 - p3).Norm() * vertexScale));
+        //        i.Add(iq++);
+        //        i.Add(iq++);
+        //        i.Add(iq++);
+        //    }
+        //    mesh.Positions = p;
+        //    mesh.TriangleIndices = i;
+        //}
+
+        //public static Stopwatch sw;
+        public static void SliceMesh(MeshGeometry3D src, MeshGeometry3D dest, double z)
         {
-            RecreateUnsmoothed(mesh);
-            var p = new Point3DCollection(mesh.Positions.Count * 3);
-            var i = new Int32Collection(mesh.TriangleIndices.Count * 3);
-            int iq = 0;
-            for (int c = 0; c < mesh.Positions.Count; c += 3)
+            if (src == null) return;
+            //sw = Stopwatch.StartNew();
+            int q = src.TriangleIndices.Count;
+            Int32Collection indices = new Int32Collection(q);
+
+            var ti = new int[src.TriangleIndices.Count];
+            src.TriangleIndices.CopyTo(ti, 0);
+            var pos = new Point3D[src.Positions.Count];
+            src.Positions.CopyTo(pos, 0);
+
+            for (int c = 0; c < q; c += 3)
             {
-                Point3D p1 = mesh.Positions[c], p2 = mesh.Positions[c + 1], p3 = mesh.Positions[c + 2];
-                p.Add(p1);
-                p.Add((Point3D)(p1 + (p2 - p1).Norm() * vertexScale));
-                p.Add((Point3D)(p1 + (p3 - p1).Norm() * vertexScale));
-                i.Add(iq++);
-                i.Add(iq++);
-                i.Add(iq++);
-
-                p.Add(p2);
-                p.Add((Point3D)(p2 + (p1 - p2).Norm() * vertexScale));
-                p.Add((Point3D)(p2 + (p3 - p2).Norm() * vertexScale));
-                i.Add(iq++);
-                i.Add(iq++);
-                i.Add(iq++);
-
-                p.Add(p3);
-                p.Add((Point3D)(p3 + (p1 - p3).Norm() * vertexScale));
-                p.Add((Point3D)(p3 + (p2 - p3).Norm() * vertexScale));
-                i.Add(iq++);
-                i.Add(iq++);
-                i.Add(iq++);
+                int i1 = ti[c], i2 = ti[c+1], i3 = ti[c+2];
+                if (pos[i1].Z <= z && pos[i2].Z <= z && pos[i3].Z <= z)
+                {
+                    indices.Add(i1);
+                    indices.Add(i2);
+                    indices.Add(i3);
+                }
             }
-            mesh.Positions = p;
-            mesh.TriangleIndices = i;
+            
+            //dest.Positions = new Point3DCollection(src.Positions.Count);
+            //foreach(var p in src.Positions) dest.Positions.Add(p);
+            if (dest.Positions.Count != src.Positions.Count)
+                dest.Positions = src.Positions.Clone(); 
+            dest.Normals = src.Normals.Clone();
+            dest.TriangleIndices = indices;
+
+            //sw.Stop();
         }
 
-        static Point3DCollection storedMeshPositions;
-        static Int32Collection storedMeshTriangles;
-        static Vector3DCollection storedMeshNormals;
-        public static void StoreMesh(MeshGeometry3D mesh)
-        {
-            storedMeshPositions = mesh.Positions;
-            storedMeshTriangles = mesh.TriangleIndices;
-            storedMeshNormals = mesh.Normals;
-        }
+        //static Point3DCollection storedMeshPositions;
+        //static Int32Collection storedMeshTriangles;
+        //static Vector3DCollection storedMeshNormals;
+        //public static void StoreMesh(MeshGeometry3D mesh)
+        //{
+        //    storedMeshPositions = mesh.Positions;
+        //    storedMeshTriangles = mesh.TriangleIndices;
+        //    storedMeshNormals = mesh.Normals;
+        //}
 
-        public static void RestoreMesh(MeshGeometry3D mesh)
-        {
-            mesh.Positions = storedMeshPositions;
-            mesh.TriangleIndices = storedMeshTriangles;
-            mesh.Normals = storedMeshNormals;
-        }
+        //public static void RestoreMesh(MeshGeometry3D mesh)
+        //{
+        //    mesh.Positions = storedMeshPositions;
+        //    mesh.TriangleIndices = storedMeshTriangles;
+        //    mesh.Normals = storedMeshNormals;
+        //}
 
         public static double MinMax(this double value, double min, double max)
         {
@@ -244,6 +301,19 @@ namespace SolidModelBrowser
             BitmapFrame frame = BitmapFrame.Create(img);
             encoder.Frames.Add(frame);
             using (var stream = File.Create(filename)) encoder.Save(stream);
+        }
+
+        public static void SaveImagePNG(Viewport3D vp, int dpi)
+        {
+            var sd = new Microsoft.Win32.SaveFileDialog() { Filter = "PNG Image|*.png" };
+            if (sd.ShowDialog().Value) RenderElementToPNG(vp, sd.FileName, dpi);
+        }
+
+        public static void RunExternalApp(string path, string args, string fname)
+        {
+            if (!File.Exists(fname)) { MessageWindow("Select file first"); return; }
+            if (string.IsNullOrWhiteSpace(path)) { MessageWindow("No app specified in settings"); return; }
+            System.Diagnostics.Process.Start(path, args.Replace("$file$", fname));
         }
 
         //public static GeometryModel3D GetAxesModel()
@@ -276,6 +346,43 @@ namespace SolidModelBrowser
             CAS += Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt) ? "A" : "";
             CAS += Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) ? "S" : "";
             return CAS;
+        }
+
+        public static void Toggle(this ToggleButton b) => b.IsChecked = !b.IsChecked;
+
+        public static string MessageWindow(string message) => MessageWindow(message, Application.Current.MainWindow, "OK");
+        public static string MessageWindow(string message, Window owner, string buttons)
+        {
+            string result = "";
+            Window mb = new Window() { SizeToContent = SizeToContent.WidthAndHeight, WindowStyle = WindowStyle.None, MinWidth = 200, MinHeight = 60, MaxWidth = 800, MaxHeight = 1000, WindowStartupLocation = WindowStartupLocation.CenterScreen };
+            if (owner != null && owner.Visibility == Visibility.Visible)
+            {
+                mb.Owner = owner;
+                mb.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                owner.Effect = new BlurEffect() { Radius = 4.0 };
+            }
+            WindowChrome.SetWindowChrome(mb, new WindowChrome() { CaptionHeight = 0.0 });
+            mb.SetResourceReference(Window.BackgroundProperty, "WindowBack");
+            mb.SetResourceReference(Window.ForegroundProperty, "WindowFore");
+            var spv = new StackPanel() { Margin = new Thickness(16) };
+            var lab = new TextBlock() { Text = message, Margin = new Thickness(0, 0, 0, 16) };
+            spv.Children.Add(lab);
+
+            var sph = new StackPanel() { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
+            var btns = buttons.Split(',');
+            foreach (var b in btns)
+            {
+                var btn = new Button() { Content = b, HorizontalAlignment = HorizontalAlignment.Center, Padding = new Thickness(30, 2, 30, 2) };
+                btn.Click += (s, e) => { result = b; mb.Close(); };
+                sph.Children.Add(btn);
+            }
+            spv.Children.Add(sph);
+            mb.Content = spv;
+            mb.ContentRendered += (s, e) => mb.InvalidateVisual();
+            mb.KeyDown += (s, e) => { if (e.Key == Key.Enter || e.Key == Key.Escape) mb.Close(); };
+            mb.ShowDialog();
+            if (owner != null) owner.Effect = null;
+            return result;
         }
     }
 }

@@ -1,5 +1,16 @@
 # Solid Model Browser, change log
 
+## v0.5 (28.01.2025)
+
+- Settings Menu added (instead of opening settings.ini file)
+- GCODE format import added (Marlin linear moves compatible, experimental)
+- Model Z-axis slicing (with slider)
+- Camera positioning at geometric/points_avg center buttons
+- Camera default positioning DefaultLookAtModelPointsAvgCenter setting added
+- Sort files by extensions setting added
+- Sort folders and files for all supported filesystems (fixed)
+- Open folder in filepanel and select file from command line argument (fixed)
+
 ## v0.4 (23.12.2024)
 
 - PLY format import added (ASCII and Binary little-endian)

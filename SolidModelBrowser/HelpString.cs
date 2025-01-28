@@ -32,6 +32,6 @@ CTRL+W - Wireframe mode
 I - show/hide model info
 LeftShift - hold left shift to drag window by viewport
 
-questfulcat 2024 (C)";
+Grigoriy E. (questfulcat) 2025 (C)";
     }
 }

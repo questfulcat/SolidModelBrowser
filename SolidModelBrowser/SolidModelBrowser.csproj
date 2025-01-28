@@ -63,19 +63,46 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="FileNavigationPanel.xaml.cs">
+    <Compile Include="Controls\ColorSelector.xaml.cs">
+      <DependentUpon>ColorSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FileNavigationPanel.xaml.cs">
       <DependentUpon>FileNavigationPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NumericBox.xaml.cs">
+      <DependentUpon>NumericBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="HelpString.cs" />
     <Compile Include="Imports\Import.cs" />
     <Compile Include="Imports\Import3MF.cs" />
+    <Compile Include="Imports\ImportGCODE.cs" />
     <Compile Include="Imports\ImportOBJ.cs" />
     <Compile Include="Imports\ImportPLY.cs" />
     <Compile Include="Imports\ImportSTL.cs" />
+    <Compile Include="MainWindowSettings.cs" />
+    <Compile Include="Controls\PropertyPanel.xaml.cs">
+      <DependentUpon>PropertyPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyInfoAttribute.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="TextEncodedImage.cs" />
+    <Compile Include="Controls\TextEncodedImage.cs" />
     <Compile Include="UCamera.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Controls\ColorSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\NumericBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PropertyPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\Colors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -84,7 +111,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="FileNavigationPanel.xaml">
+    <Page Include="Controls\FileNavigationPanel.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -103,6 +130,10 @@
     <Page Include="Styles\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

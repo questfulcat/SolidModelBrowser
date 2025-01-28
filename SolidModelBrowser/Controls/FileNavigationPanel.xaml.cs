@@ -14,7 +14,7 @@ namespace SolidModelBrowser
 
         public delegate void FileNavigationEventHandler(object Sender, string filename);
         public event FileNavigationEventHandler FileNavigated;
-         
+
 
         public FileNavigationPanel()
         {
@@ -23,7 +23,7 @@ namespace SolidModelBrowser
             listBoxFiles.SelectionChanged += ListBoxFiles_SelectionChanged;
             listBoxFiles.PreviewMouseDoubleClick += ListBoxFiles_PreviewMouseDoubleClick;
             listBoxFiles.PreviewKeyDown += ListBoxFiles_PreviewKeyDown;
-            
+
             fill();
             foreach (DriveInfo d in DriveInfo.GetDrives())
             {
@@ -40,6 +40,11 @@ namespace SolidModelBrowser
 
             Path = @"c:\";
             watchForDirectory();
+        }
+
+        ~FileNavigationPanel()
+        {
+            watcher?.Dispose();
         }
 
         private string getSelectedItemPath()
@@ -140,7 +145,7 @@ namespace SolidModelBrowser
 
             if ((new DirectoryInfo(path)).Parent != null) listBoxFiles.Items.Add(new TextBlock() { Text = ".." });
 
-            string[] dirs = Directory.GetDirectories(path);
+            string[] dirs = Directory.GetDirectories(path).OrderBy(d => d).ToArray();
             for (int c = 0; c < dirs.Length; c++)
             {
                 TextBlock t = new TextBlock();
@@ -152,6 +157,8 @@ namespace SolidModelBrowser
             }
 
             string[] files = Directory.GetFiles(path);
+            if (SortFilesByExtensions) files = files.OrderBy(f => System.IO.Path.GetExtension(f) + System.IO.Path.GetFileNameWithoutExtension(f)).ToArray();
+            else files = files.OrderBy(f => f).ToArray();
             for (int c = 0; c < files.Length; c++)
             {
                 string ext = System.IO.Path.GetExtension(files[c]).Trim('.').ToLower();
@@ -159,9 +166,6 @@ namespace SolidModelBrowser
                 {
                     TextBlock t = new TextBlock();
                     if (extensionsColors.ContainsKey(ext)) t.Foreground = extensionsColors[ext];
-                    //if (ext == "3mf") t.Foreground = new SolidColorBrush(Color.FromRgb(255, 200, 200));
-                    //if (ext == "stl") t.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 200));
-                    //if (ext == "obj") t.Foreground = new SolidColorBrush(Color.FromRgb(200, 200, 255));
                     t.Text = System.IO.Path.GetFileName(files[c]);
                     t.Tag = files[c];
                     listBoxFiles.Items.Add(t);
@@ -173,6 +177,23 @@ namespace SolidModelBrowser
                 var li = listBoxFiles.Items.OfType<TextBlock>().FirstOrDefault(t => t.Tag?.ToString() == si);
                 listBoxFiles.SelectedItem = li;
             }
+        }
+
+        public void SelectFile(string filepath, bool focusControl)
+        {
+            if (!File.Exists(filepath)) return;
+            Path = System.IO.Path.GetDirectoryName(filepath);
+            foreach (var f in listBoxFiles.Items)
+                if (f is TextBlock t && (t.Tag as string) == filepath)
+                {
+                    listBoxFiles.SelectedItem = f;
+                    if (focusControl)
+                    {
+                        listBoxFiles.UpdateLayout();
+                        var listBoxItem = (ListBoxItem)listBoxFiles.ItemContainerGenerator.ContainerFromItem(listBoxFiles.SelectedItem);
+                        listBoxItem?.Focus();
+                    }
+                }
         }
 
         public void Reselect()
@@ -214,6 +235,7 @@ namespace SolidModelBrowser
             }
             set
             {
+                if (value == path) return;
                 if (!Directory.Exists(value)) return;
                 
                 string drv = value.Substring(0, 1).ToUpper();
@@ -236,6 +258,7 @@ namespace SolidModelBrowser
             }
         }
 
+        public bool SortFilesByExtensions { get; set; } = false;
         public bool UseExtensionFilter { get; set; } = true;
 
         List<string> extensions = new List<string>();
