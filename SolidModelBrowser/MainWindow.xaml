@@ -163,6 +163,9 @@
                         <Button x:Name="ButtonReloadModel" ToolTip="Reload model and reset camera [F5]" Width="30" Height="30">
                             <local:TextEncodedImage EncodedImage="?OO???O??K?of?qOOCGC?A@_O?GC?A@a_oCO}??B?_????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ReloadModel}"></local:TextEncodedImage>
                         </Button>
+                        <Button x:Name="ButtonExport" ToolTip="Export current model to file [CTRL+S]" Width="30" Height="30">
+                            <local:TextEncodedImage EncodedImage="?OO?????o~BcO@HcOAHc^A@_O~JS_A|nO@Is~A~~??????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Default}"></local:TextEncodedImage>
+                        </Button>
                         <Button x:Name="ButtonSaveImage" ToolTip="Save viewport to PNG image [F6]" Width="30" Height="30">
                             <local:TextEncodedImage EncodedImage="?OO?????_F?G@_~~H?OY[ceHH{TA~do^HwRA[c??x~^???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_SaveImage}"></local:TextEncodedImage>
                         </Button>

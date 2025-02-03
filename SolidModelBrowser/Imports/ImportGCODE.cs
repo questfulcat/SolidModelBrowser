@@ -54,27 +54,12 @@ namespace SolidModelBrowser
             Vector3D a = new Vector3D(src.X, src.Y, src.Z);
             Vector3D b = new Vector3D(dst.X, dst.Y, dst.Z);
             var r = b - a;
-            var p = Vector3D.CrossProduct(r, rz);// new Vector3D(r.Y, r.X, 0.0);
+            var p = Vector3D.CrossProduct(r, rz);
             p.Normalize();
             p /= 2;
             p *= 0.5; // line width
 
-            //if (r.Length > 100) throw new Exception();
-
             int i = Positions.Count;
-
-            //Positions.Add((Point3D)(a + p));
-            //Positions.Add((Point3D)(a - p));
-            //Positions.Add((Point3D)(b - p));
-            //Positions.Add((Point3D)(b + p));
-
-            //Indices.Add(i);
-            //Indices.Add(i + 1);
-            //Indices.Add(i + 2);
-
-            //Indices.Add(i + 2);
-            //Indices.Add(i + 3);
-            //Indices.Add(i);
 
             Positions.Add((Point3D)(a + rz));
             Positions.Add((Point3D)(a + p));
@@ -99,6 +84,13 @@ namespace SolidModelBrowser
             Indices.Add(i + 5);
             Indices.Add(i);
 
+            //Indices.Add(i + 1);
+            //Indices.Add(i + 5);
+            //Indices.Add(i + 4);
+
+            //Indices.Add(i + 4);
+            //Indices.Add(i + 2);
+            //Indices.Add(i + 1);
         }
 
         public override void Load(string filename)

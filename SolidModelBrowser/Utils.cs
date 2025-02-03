@@ -350,8 +350,8 @@ namespace SolidModelBrowser
 
         public static void Toggle(this ToggleButton b) => b.IsChecked = !b.IsChecked;
 
-        public static string MessageWindow(string message) => MessageWindow(message, Application.Current.MainWindow, "OK");
-        public static string MessageWindow(string message, Window owner, string buttons)
+        public static string MessageWindow(string message) => MessageWindow(message, Application.Current.MainWindow, "OK", Orientation.Horizontal);
+        public static string MessageWindow(string message, Window owner, string buttons, Orientation buttonsOrientation)
         {
             string result = "";
             Window mb = new Window() { SizeToContent = SizeToContent.WidthAndHeight, WindowStyle = WindowStyle.None, MinWidth = 200, MinHeight = 60, MaxWidth = 800, MaxHeight = 1000, WindowStartupLocation = WindowStartupLocation.CenterScreen };
@@ -368,21 +368,99 @@ namespace SolidModelBrowser
             var lab = new TextBlock() { Text = message, Margin = new Thickness(0, 0, 0, 16) };
             spv.Children.Add(lab);
 
-            var sph = new StackPanel() { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
+            var spbtns = new StackPanel() { Orientation = buttonsOrientation, HorizontalAlignment = HorizontalAlignment.Center };
             var btns = buttons.Split(',');
             foreach (var b in btns)
             {
                 var btn = new Button() { Content = b, HorizontalAlignment = HorizontalAlignment.Center, Padding = new Thickness(30, 2, 30, 2) };
                 btn.Click += (s, e) => { result = b; mb.Close(); };
-                sph.Children.Add(btn);
+                spbtns.Children.Add(btn);
             }
-            spv.Children.Add(sph);
+            spv.Children.Add(spbtns);
             mb.Content = spv;
             mb.ContentRendered += (s, e) => mb.InvalidateVisual();
-            mb.KeyDown += (s, e) => { if (e.Key == Key.Enter || e.Key == Key.Escape) mb.Close(); };
+            mb.KeyDown += (s, e) => { if (e.Key == Key.Escape) mb.Close(); };
             mb.ShowDialog();
             if (owner != null) owner.Effect = null;
             return result;
+        }
+
+
+
+        public static Vector3D RotateVector(Vector3D v, double ax, double ay, double az)
+        {
+            // Convert angles from degrees to radians
+            double radX = ax * (Math.PI / 180.0);
+            double radY = ay * (Math.PI / 180.0);
+            double radZ = az * (Math.PI / 180.0);
+
+            // Rotation around X axis
+            double cosX = Math.Cos(radX);
+            double sinX = Math.Sin(radX);
+            double y1 = v.Y * cosX - v.Z * sinX;
+            double z1 = v.Y * sinX + v.Z * cosX;
+
+            // Rotation around Y axis
+            double cosY = Math.Cos(radY);
+            double sinY = Math.Sin(radY);
+            double x2 = v.X * cosY + z1 * sinY;
+            double z2 = -v.X * sinY + z1 * cosY;
+
+            // Rotation around Z axis
+            double cosZ = Math.Cos(radZ);
+            double sinZ = Math.Sin(radZ);
+            double x3 = x2 * cosZ - y1 * sinZ;
+            double y3 = x2 * sinZ + y1 * cosZ;
+
+            return new Vector3D(x3, y3, z2);
+        }
+
+        public static Point3D RotatePoint(Point3D p, Point3D center, double ax, double ay, double az)
+        {
+            double vx = p.X - center.X;
+            double vy = p.Y - center.Y;
+            double vz = p.Z - center.Z;
+
+            // Convert angles from degrees to radians
+            double radX = ax * (Math.PI / 180.0);
+            double radY = ay * (Math.PI / 180.0);
+            double radZ = az * (Math.PI / 180.0);
+
+            // Rotation around X axis
+            double cosX = Math.Cos(radX);
+            double sinX = Math.Sin(radX);
+            double y1 = vy * cosX - vz * sinX;
+            double z1 = vy * sinX + vz * cosX;
+
+            // Rotation around Y axis
+            double cosY = Math.Cos(radY);
+            double sinY = Math.Sin(radY);
+            double x2 = vx * cosY + z1 * sinY;
+            double z2 = -vx * sinY + z1 * cosY;
+
+            // Rotation around Z axis
+            double cosZ = Math.Cos(radZ);
+            double sinZ = Math.Sin(radZ);
+            double x3 = x2 * cosZ - y1 * sinZ;
+            double y3 = x2 * sinZ + y1 * cosZ;
+
+            return new Point3D(center.X + x3, center.Y + y3, center.Z + z2);
+        }
+
+        public static void RotateMesh(MeshGeometry3D mesh, Point3D center, double ax, double ay, double az)
+        {
+            var positions = new Point3DCollection(mesh.Positions.Count);
+            var normals = new Vector3DCollection(mesh.Normals.Count);
+            foreach (var p in mesh.Positions) positions.Add(RotatePoint(p, center, ax, ay, az));
+            foreach (var n in mesh.Normals) normals.Add(RotateVector(n, ax, ay, az));
+            mesh.Positions = positions;
+            mesh.Normals = normals;
+        }
+
+
+        public static Vector3D GenerateNormal(Point3D p1, Point3D p2, Point3D p3)
+        {
+            return Vector3D.CrossProduct(p2 - p1, p3 - p1).Norm();
         }
     }
 }

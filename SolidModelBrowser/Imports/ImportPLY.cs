@@ -20,6 +20,7 @@ namespace SolidModelBrowser
         PLYFormat plyFormat = PLYFormat.Undef;
         int vertices = 0;
         int faces = 0;
+        bool withnormals = false;
 
         List<string> vertexTypes = new List<string>();
         List<string> vertexValues = new List<string>();
@@ -36,6 +37,7 @@ namespace SolidModelBrowser
             vertexTypes.Clear();
             vertexValues.Clear();
             headerLinesCount = 0;
+            withnormals = false;
         }
 
         void loadHeader(string filename)
@@ -79,6 +81,8 @@ namespace SolidModelBrowser
                 }
                 headerLinesCount++;
             }
+
+            if (vertexValues.Contains("nx") && vertexValues.Contains("ny") && vertexValues.Contains("nz")) withnormals = true;
         }
 
         public override void Load(string filename)
@@ -95,14 +99,20 @@ namespace SolidModelBrowser
                 {
                     int linenum = headerLinesCount + c;
                     string[] parts = lines[linenum].Split(separator, StringSplitOptions.RemoveEmptyEntries);
-                    double x = 0D, y = 0D, z = 0D;
+                    double x = 0.0, y = 0.0, z = 0.0;
+                    double nx = 0.0, ny = 0.0, nz = 0.0;
                     for (int v = 0; v < vq; v++)
                     {
-                        if (vertexValues[v] == "x") x = double.Parse(parts[v]);
-                        if (vertexValues[v] == "y") y = double.Parse(parts[v]);
-                        if (vertexValues[v] == "z") z = double.Parse(parts[v]);
+                        var vv = vertexValues[v];
+                        if (vv == "x") x = double.Parse(parts[v]);
+                        else if (vv == "y") y = double.Parse(parts[v]);
+                        else if (vv == "z") z = double.Parse(parts[v]);
+                        else if (vv == "nx") nx = double.Parse(parts[v]);
+                        else if (vv == "ny") ny = double.Parse(parts[v]);
+                        else if (vv == "nz") nz = double.Parse(parts[v]);
                     }
                     Positions.Add(new Point3D(x, y, z));
+                    if (withnormals) Normals.Add(new Vector3D(nx, ny, nz));
 
                     Progress = linenum * 100 / linescount;
                     if (StopFlag) return;
@@ -144,7 +154,8 @@ namespace SolidModelBrowser
                     int datacount = vertices + faces;
                     for (int c = 0; c < vertices; c++)
                     {
-                        double x = 0D, y = 0D, z = 0D;
+                        double x = 0.0, y = 0.0, z = 0.0;
+                        double nx = 0.0, ny = 0.0, nz = 0.0;
                         for (int v = 0; v < vq; v++)
                         {
                             if (vertexTypes[v] == "float")
@@ -154,6 +165,9 @@ namespace SolidModelBrowser
                                 if (vv == "x") x = t;
                                 else if (vv == "y") y = t;
                                 else if (vv == "z") z = t;
+                                else if (vv == "nx") nx = t;
+                                else if (vv == "ny") ny = t;
+                                else if (vv == "nz") nz = t;
                             }
                             else if (vertexTypes[v] == "double")
                             {
@@ -162,6 +176,9 @@ namespace SolidModelBrowser
                                 if (vv == "x") x = t;
                                 else if (vv == "y") y = t;
                                 else if (vv == "z") z = t;
+                                else if (vv == "nx") nx = t;
+                                else if (vv == "ny") ny = t;
+                                else if (vv == "nz") nz = t;
                             }
                             else if (vertexTypes[v] == "char" || vertexTypes[v] == "uchar") br.ReadByte();
                             else if (vertexTypes[v] == "short" || vertexTypes[v] == "ushort") br.ReadUInt16();
@@ -169,6 +186,7 @@ namespace SolidModelBrowser
                             else throw new Exception("Not supported PLY structure (unknown data type)");
                         }
                         Positions.Add(new Point3D(x, y, z));
+                        if (withnormals) Normals.Add(new Vector3D(nx, ny, nz));
 
                         Progress = c * 100 / datacount;
                         if (StopFlag) return;

@@ -72,6 +72,16 @@
     <Compile Include="Controls\NumericBox.xaml.cs">
       <DependentUpon>NumericBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Scene.xaml.cs">
+      <DependentUpon>Scene.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Exports\Export.cs" />
+    <Compile Include="Exports\Export3MF.cs" />
+    <Compile Include="Exports\ExportOBJ.cs" />
+    <Compile Include="Exports\ExportPLYAscii.cs" />
+    <Compile Include="Exports\ExportPLYBinary.cs" />
+    <Compile Include="Exports\ExportSTLAscii.cs" />
+    <Compile Include="Exports\ExportSTLBinary.cs" />
     <Compile Include="HelpString.cs" />
     <Compile Include="Imports\Import.cs" />
     <Compile Include="Imports\Import3MF.cs" />
@@ -100,6 +110,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PropertyPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Scene.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -163,5 +177,6 @@
   <ItemGroup>
     <Resource Include="icon3a.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

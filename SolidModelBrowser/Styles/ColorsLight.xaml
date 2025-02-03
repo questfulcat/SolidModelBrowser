@@ -138,6 +138,7 @@
         <GradientStop Color="#777" Offset="1"/>
     </RadialGradientBrush>-->
 
+    <SolidColorBrush x:Key="MenuButton_Default" Color="#444" />
     <SolidColorBrush x:Key="MenuButton_ReloadModel" Color="#444" />
     <SolidColorBrush x:Key="MenuButton_SaveImage" Color="#464" />
     <SolidColorBrush x:Key="MenuButton_OpenExtApp" Color="#444" />

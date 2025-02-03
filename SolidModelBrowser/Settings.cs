@@ -107,15 +107,15 @@ namespace SolidModelBrowser
         [PropertyInfo(Category = "Camera", Description = "Camera field of view angle in fish eye mode", MenuLabel = "FOV in fish eye mode", Min = 5.0, Max = 160.0)]
         public double FishEyeFOV { get; set; } = 120.0;
 
-        [PropertyInfo(Category = "Camera", Description = "Camera basic shift from model in units relative to model overall size", MenuLabel = "Initial shift", Min = 0.5, Max = 10.0)]
-        public double CameraInitialShift { get; set; } = 2.0;
+        [PropertyInfo(Category = "Camera", Description = "Camera basic shift from model in units relative to model overall size", MenuLabel = "Initial shift", Min = 0.5, Max = 10.0, Increment = 0.1)]
+        public double CameraInitialShift { get; set; } = 1.5;
 
         [PropertyInfo(Category = "Camera", Description = "Default camera look at model points average or geometric center", MenuLabel = "Default camera look at points average center")]
         public bool DefaultLookAtModelPointsAvgCenter { get; set; } = true;
 
 
 
-        [PropertyInfo(Category = "Model", Description = "Model rotation angle: 45/90 deg options allowed")]
+        [PropertyInfo(Category = "Model", Description = "Model rotation angle: 45/90 deg options allowed", MenuLabel = "Rotation angle", Min = 5.0, Max = 180.0)]
         public double ModelRotationAngle { get; set; } = 90.0;
 
         [PropertyInfo(Category = "Model", Description = "Wireframe mode edge scaling factor 0.001...0.9", MenuLabel = "Wireframe edge scale", Min = 0.001, Max = 0.9, Increment = 0.01)]

@@ -43,6 +43,7 @@ namespace SolidModelBrowser
             FilePanelColumn.Width = new GridLength(settings.FilePanelWidth);
             filePanel.SortFilesByExtensions = settings.SortFilesByExtensions;
             filePanel.Path = settings.SelectedPath;
+            filePanel.Refresh();
 
             ButtonDiffuseMaterial.IsChecked = settings.IsDiffuseEnabled;
             ButtonSpecularMaterial.IsChecked = settings.IsSpecularEnabled;
@@ -56,7 +57,7 @@ namespace SolidModelBrowser
             settings.FOV = Utils.MinMax(settings.FOV, 5.0, 160.0);
             settings.FishEyeFOV = Utils.MinMax(settings.FishEyeFOV, 5.0, 160.0);
             settings.CameraInitialShift = Utils.MinMax(settings.CameraInitialShift, 0.5, 10.0);
-            settings.ModelRotationAngle = Utils.SelectInRange(settings.ModelRotationAngle, new double[] { 45.0, 90.0 }, 90.0);
+            settings.ModelRotationAngle = Utils.MinMax(settings.ModelRotationAngle, 5.0, 180.0);
             settings.WireframeEdgeScale = Utils.MinMax(settings.WireframeEdgeScale, 0.001, 0.9);
 
             updateCameraModes();

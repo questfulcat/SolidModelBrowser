@@ -27,18 +27,18 @@
         <DockPanel>
             <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
                 <Button Name="ButtonClose" DockPanel.Dock="Right" HorizontalAlignment="Right" Width="30" Height="30">
-                    <local:TextEncodedImage EncodedImage="0@@0000000080148021090P10H00908401280100000000" Width="16" Height="16" EncodedImageColor="{StaticResource ButtonImageColor}"></local:TextEncodedImage>
+                    <local:TextEncodedImage EncodedImage="0@@0000000080148021090P10H00908401280100000000" Width="16" Height="16" EncodedImageColor="{DynamicResource ButtonImageColor}"></local:TextEncodedImage>
                 </Button>
                 <local:TextEncodedImage DockPanel.Dock="Left" Margin="8,0,2,0" EncodedImage="?OO???GC?BBwo@M[_fFw~@{N?}@?N?oB?{??N?oB?W????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Settings}"></local:TextEncodedImage>
-                <Border Name="BorderHeader" Background="{StaticResource WindowBack}">
+                <Border Name="BorderHeader" Background="{DynamicResource WindowBack}">
                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock Margin="4">Settings</TextBlock>
-                        <!--<Button x:Name="ButtonLoadDefaults" ToolTip="Reset to default settings" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO??_rzHDAQfbSGw{A???_@?W??E?{N?}@?N?_@??????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ReloadModel}"></local:TextEncodedImage>
+                        <TextBlock Margin="4,4,8,4">Settings</TextBlock>
+                        <Button x:Name="ButtonLoadDefaults" ToolTip="Reset to default settings" Width="30" Height="30">
+                            <local:TextEncodedImage EncodedImage="?OO??_rzHDAQfbSGw{A???_@?W??E?{N?}@?N?_@??????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Default}"></local:TextEncodedImage>
                         </Button>
                         <Button x:Name="ButtonOpenInTextEditor" ToolTip="Open in default text editor for .ini" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO??????k@?C??@?O??C??@?O??C??@?O??Z?????????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ReloadModel}"></local:TextEncodedImage>
-                        </Button>-->
+                            <local:TextEncodedImage EncodedImage="?OO?????o~CC_A|CP_GsC@`GODDCJ@tPO?CC?@@Oo~F???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Default}"></local:TextEncodedImage>
+                        </Button>
                     </StackPanel>
                 </Border>
             </DockPanel>

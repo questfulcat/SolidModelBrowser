@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -13,7 +15,7 @@ namespace SolidModelBrowser
 {
     public partial class MainWindow : Window
     {
-        const string version = "0.5";
+        const string version = "0.6";
 
         MeshGeometry3D meshBase, meshWireframe;
         Point3D modelCenter = new Point3D();
@@ -36,9 +38,9 @@ namespace SolidModelBrowser
             ButtonReloadModel.Click += (s, e) => { clearView(); loadFile(lastFilename); };
             ButtonSaveImage.Click += (s, e) => Utils.SaveImagePNG(viewport3D, settings.SaveImageDPI);
             ButtonOpenExtApp.Click += (s, e) => Utils.RunExternalApp(settings.ExternalApp, settings.ExternalAppArguments, lastFilename);
-            ButtonRotateX.Click += (s, e) => addRotation(Axis.X, settings.ModelRotationAngle);
-            ButtonRotateY.Click += (s, e) => addRotation(Axis.Y, settings.ModelRotationAngle);
-            ButtonRotateZ.Click += (s, e) => addRotation(Axis.Z, settings.ModelRotationAngle);
+            ButtonRotateX.Click += (s, e) => addRotation(settings.ModelRotationAngle, 0, 0);
+            ButtonRotateY.Click += (s, e) => addRotation(0, settings.ModelRotationAngle, 0);
+            ButtonRotateZ.Click += (s, e) => addRotation(0, 0, settings.ModelRotationAngle);
             ButtonDiffuseMaterial.Click += (s, e) => applyMaterials();
             ButtonSpecularMaterial.Click += (s, e) => applyMaterials();
             ButtonEmissiveMaterial.Click += (s, e) => applyMaterials();
@@ -56,6 +58,7 @@ namespace SolidModelBrowser
             ButtonWireframe.Click += (s, e) => updateMeshes(false);
             ButtonShowModelInfo.Click += (s, e) => updateModelInfo();
             ButtonSettings.Click += (s, e) => runSettings();
+            ButtonExport.Click += (s, e) => export();
 
             ButtonChangeTheme.Click += (s, e) => { settings.LightTheme = !settings.LightTheme; setAppTheme(); };
             ButtonMinimize.Click += (s, e) => WindowState = WindowState.Minimized;
@@ -91,12 +94,8 @@ namespace SolidModelBrowser
             MaxWidth = settings.MaxWidth < 1 ? scrsize.Width : Math.Max(settings.MaxWidth, MinWidth);
             MaxHeight = settings.MaxHeight < 1 ? scrsize.Height : Math.Max(settings.MaxHeight, MinHeight);
 
-            //var args = Environment.GetCommandLineArgs();
-            //if (args.Length == 2 && File.Exists(args[1]) && Import.SelectImporter(args[1])) filePanel.SelectFile(args[1], true); // loadFile(args[1]);
-
             showInfo($"Solid Model Browser v {version}\r\nSTL, OBJ, 3MF, PLY, GCODE formats supported\r\n\r\nquestfulcat 2025 (C)\r\nhttps://github.com/questfulcat/solidmodelbrowser\r\nDistributed under MIT License\r\n\r\nF1 - keymap help");
             this.ContentRendered += windowRendered;
-            //Utils.MessageWindow("hello!");
         }
 
         void windowRendered(object s, EventArgs a)
@@ -116,7 +115,7 @@ namespace SolidModelBrowser
         {
             try
             {
-                //textBlockProgress.Text = ImportBase.Progress.ToString();
+                //textBlockProgress.Text = Import.Progress.ToString();
                 borderProgressContainer.Visibility = Visibility.Visible;
                 borderProgress.Width = Import.Progress < 0 ? 0 : (Import.Progress > 100 ? 100 : Import.Progress);
 
@@ -136,11 +135,11 @@ namespace SolidModelBrowser
                 meshWireframe = null;
                 if (settings.UnsmoothAfterLoading) meshBase = Utils.UnsmoothMesh(meshBase);
                 Utils.FillMesh(meshBase, mesh);
-                Utils.GetModelCenterAndSize(mesh, out modelCenter, out modelPointsAvgCenter, out modelSize);
+                Utils.GetModelCenterAndSize(meshBase, out modelCenter, out modelPointsAvgCenter, out modelSize);
                 camera.LookCenter = settings.DefaultLookAtModelPointsAvgCenter ? modelPointsAvgCenter : modelCenter;
                 camera.DefaultPosition(modelSize.Length, settings.CameraInitialShift);
 
-                if (Import.CurrentImport.InitialXRotationNeeded) addRotation(Axis.X, 90.0);
+                if (Import.CurrentImport.InitialXRotationNeeded) addRotation(90.0, 0, 0);
                 if (ButtonShowModelInfo.IsChecked.Value) showModelInfo();
                 else hideInfo();
 
@@ -192,8 +191,13 @@ namespace SolidModelBrowser
             }
         }
 
-        enum Axis { X = 1, Y = 2, Z = 4 }
-        void addRotation(Axis axis, double angle) => transform.Children.Add(new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(axis == Axis.X ? 1 : 0, axis == Axis.Y ? 1 : 0, axis == Axis.Z ? 1 : 0), angle), modelCenter));
+        void addRotation(double ax, double ay, double az)
+        {
+            Utils.RotateMesh(meshBase, settings.DefaultLookAtModelPointsAvgCenter ? modelPointsAvgCenter : modelCenter, ax, ay, az);
+            Utils.GetModelCenterAndSize(meshBase, out modelCenter, out modelPointsAvgCenter, out modelSize);
+            initSlicer();
+            updateMeshes(true);
+        }
 
         private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -202,12 +206,12 @@ namespace SolidModelBrowser
             if (CAS == "") // no modifier keys
             {
                 double ra = settings.ModelRotationAngle;
-                if (e.Key == Key.A) addRotation(Axis.Z, ra);
-                if (e.Key == Key.D) addRotation(Axis.Z, -ra);
-                if (e.Key == Key.S) addRotation(Axis.X, ra);
-                if (e.Key == Key.W) addRotation(Axis.X, -ra);
-                if (e.Key == Key.E) addRotation(Axis.Y, ra);
-                if (e.Key == Key.Q) addRotation(Axis.Y, -ra);
+                if (e.Key == Key.A) addRotation(0, 0, ra);
+                if (e.Key == Key.D) addRotation(0, 0, -ra);
+                if (e.Key == Key.S) addRotation(ra, 0, 0);
+                if (e.Key == Key.W) addRotation(-ra, 0, 0);
+                if (e.Key == Key.E) addRotation(0, ra, 0);
+                if (e.Key == Key.Q) addRotation(0, -ra, 0);
 
                 double cis = settings.CameraInitialShift;
                 if (e.Key == Key.G) camera.RelativePosition(modelSize.Length, 0, -cis, 0);
@@ -241,6 +245,7 @@ namespace SolidModelBrowser
             {
                 if (e.Key == Key.F) { meshBase = Utils.UnsmoothMesh(meshBase); updateMeshes(true); }
                 if (e.Key == Key.W) { ButtonWireframe.Toggle(); updateMeshes(false); }
+                if (e.Key == Key.S) export();
             }
         }
         
@@ -255,8 +260,6 @@ namespace SolidModelBrowser
             transform.Children.Clear();
             hideInfo();
         }
-
-        
 
 
         DiffuseMaterial matDiffuse;
@@ -373,8 +376,10 @@ namespace SolidModelBrowser
             this.Effect = new BlurEffect() { Radius = 4.0 };
             settingsWindow.ShowDialog();
             this.Effect = null;
+            if (settingsWindow.WindowResult == SettingsWindowResult.ResetDefaults) { settings = new Settings(); }
             saveSettings();
             loadSettings();
+            if (settingsWindow.WindowResult == SettingsWindowResult.OpenEditor) { settings.StartProcess(); Close(); }
         }
 
         void updateMeshes(bool forceUpdateWireframe)
@@ -408,6 +413,24 @@ namespace SolidModelBrowser
             Utils.SliceMesh(ButtonWireframe.IsChecked.Value ? meshWireframe : meshBase, mesh, sliderSliceHeight.Value);
             if (mesh.TriangleIndices.Count == 0) { mesh.TriangleIndices.Add(0); }
             //showInfo($"ms: {Utils.sw.ElapsedMilliseconds}\r\nticks: {Utils.sw.ElapsedTicks}\r\nheight: {sliderSliceHeight.Value}, slicescount {++slicescount}, tris: {mesh.TriangleIndices.Count}");
+        }
+
+        void export()
+        {
+            string exporters = string.Join(",", Export.Exports.Select(e => e.Description).OrderBy(e => e));
+            string r = Utils.MessageWindow("Select format", this, exporters, Orientation.Vertical);
+            var exp = Export.Exports.FirstOrDefault(e => e.Description == r);
+            if (exp == null) return;
+            var sfd = new System.Windows.Forms.SaveFileDialog() { DefaultExt = exp.Extension, Filter = $"{exp.Description}|*.{exp.Extension}" };
+            if (sfd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+            try
+            {
+                MeshGeometry3D m = mesh;
+                if (exp.InitialXRotationNeeded) { m = mesh.Clone(); Utils.RotateMesh(m, settings.DefaultLookAtModelPointsAvgCenter ? modelPointsAvgCenter : modelCenter, -90, 0, 0); }
+                exp.Save(m, sfd.FileName);
+                showInfo($"Exported to file {sfd.FileName}");
+            }
+            catch (Exception exc) { Utils.MessageWindow($"Export failed with message\r\n{exc.Message}"); }
         }
     }
 }

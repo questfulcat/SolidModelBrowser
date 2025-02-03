@@ -1,5 +1,11 @@
 # Solid Model Browser, change log
 
+## v0.5.1
+
+- Export to STL, OBJ, PLY formats added
+- Settings menu, reset to defaults and open in text editor buttons added
+- Rotation reworked (slower, but now it applied to model geometry data)
+
 ## v0.5 (28.01.2025)
 
 - Settings Menu added (instead of opening settings.ini file)
