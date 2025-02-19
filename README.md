@@ -1,6 +1,6 @@
 # Solid Model Browser
 
-This app is viewer for STL, 3MF, OBJ, PLY, GCODE files.
+This app is viewer and converter for STL, 3MF, OBJ, PLY, GCODE files.
 User can select files in left file panel and observe it's 3D content.
 
 ![cover01](https://github.com/user-attachments/assets/c996f67c-7100-4a8b-92c1-af75fd2d44bb)
@@ -21,7 +21,11 @@ Build project with Visual Studio 2022
 
 - Open binary and ASCII STL files, load main 3Dmodel from 3MF files (CURA projects), partial support for OBJ files with triangle faces, PLY (ASCII and binary little-endian), experimental GCODE support with linear movements (Marlin compatible codes)
 
-- Model slicing along model local Z axis (mostly to view GCODE layers)
+- Export model to file formats STL (ASCII/Bin), 3MF (simplified), OBJ, PLY (ASCII/Bin)
+
+- Model slicing along Z axis (mostly to view GCODE layers) with vertical slider.
+
+![Image](https://github.com/user-attachments/assets/cae961b2-a81f-4781-9cdd-b1b331ee9393)
 
 - Fly camera around model
 
@@ -31,11 +35,11 @@ Build project with Visual Studio 2022
 
 - Rotate model
 
-- Set up materials for view
+- Set up materials for model and scene lights
 
 - Perspective and orthographic camera modes, fish eye FOV model
 
-- Show XYZ axes
+- Show XYZ axes and ground plane
 
 - Resolve normals problems, polygon vertex order
 
@@ -45,7 +49,7 @@ Build project with Visual Studio 2022
 
 ![img01](https://github.com/user-attachments/assets/dd72c856-e867-4916-bc21-bff514890afe)
 
-## Screenshots
+## Other Screenshots
 
 ![img02](https://github.com/user-attachments/assets/03dd9a9f-9a7e-477d-a349-92937fc5d4d3)
 
