@@ -3,7 +3,7 @@ using System.Windows.Media.Media3D;
 
 namespace SolidModelBrowser
 {
-    internal class UCamera
+    public class UCamera
     {
         Viewport3D viewport;
         PerspectiveCamera camPerspective = new PerspectiveCamera() { NearPlaneDistance = 0.1, FarPlaneDistance = 1000000.0 };

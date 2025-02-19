@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace SolidModelBrowser
 {
@@ -61,11 +63,20 @@ namespace SolidModelBrowser
             settings.WireframeEdgeScale = Utils.MinMax(settings.WireframeEdgeScale, 0.001, 0.9);
 
             updateCameraModes();
-            updateAxes();
-            updateGround();
+            scene.IsAxesVisible = ButtonAxes.IsChecked.Value;
+            scene.IsGroundVisible = ButtonGround.IsChecked.Value;
 
-            createMaterials();
+            scene.CreateMaterials(settings.DiffuseColor.Color, settings.SpecularColor.Color, settings.EmissiveColor.Color, settings.BackDiffuseColor.Color, settings.SpecularPower);
             applyMaterials();
+
+            scene.RemoveAllLights();
+            if (settings.IsAmbientLightEnabled) scene.CreateAmbientLight(settings.AmbientLightColor.Color);
+            if (settings.IsDirectionalLight1Enabled) scene.CreateDirectionalLight(settings.DirectionalLight1Color.Color, settings.DirectionalLight1Dir);
+            if (settings.IsDirectionalLight2Enabled) scene.CreateDirectionalLight(settings.DirectionalLight2Color.Color, settings.DirectionalLight2Dir);
+            if (settings.IsDirectionalLight3Enabled) scene.CreateDirectionalLight(settings.DirectionalLight3Color.Color, settings.DirectionalLight3Dir);
+
+            scene.CreateAxes(settings.AxesLength);
+            scene.CreateGround(settings.GroundRectangle, settings.GroundCheckerSize, settings.GroundDiffuseColor.Color, settings.GroundEmissiveColor.Color);
         }
     }
 }

@@ -24,8 +24,6 @@ namespace SolidModelBrowser
 
         string lastFilename;
 
-        UCamera camera;
-
         DispatcherTimer loadingTimer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 100), IsEnabled = false };
 
         Settings settings = new Settings();
@@ -36,7 +34,7 @@ namespace SolidModelBrowser
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture; // to avoid "." "," mess while parsing
             
             ButtonReloadModel.Click += (s, e) => { clearView(); loadFile(lastFilename); };
-            ButtonSaveImage.Click += (s, e) => Utils.SaveImagePNG(viewport3D, settings.SaveImageDPI);
+            ButtonSaveImage.Click += (s, e) => Utils.SaveImagePNG(scene.Viewport3D, settings.SaveImageDPI);
             ButtonOpenExtApp.Click += (s, e) => Utils.RunExternalApp(settings.ExternalApp, settings.ExternalAppArguments, lastFilename);
             ButtonRotateX.Click += (s, e) => addRotation(settings.ModelRotationAngle, 0, 0);
             ButtonRotateY.Click += (s, e) => addRotation(0, settings.ModelRotationAngle, 0);
@@ -46,11 +44,11 @@ namespace SolidModelBrowser
             ButtonEmissiveMaterial.Click += (s, e) => applyMaterials();
             ButtonBacksideDiffuseMaterial.Click += (s, e) => applyMaterials();
             ButtonSelectCamera.Click += (s, e) => updateCameraModes();
-            ButtonCenterCameraAtModelGC.Click += (s, e) => camera.TurnAt(modelCenter);
-            ButtonCenterCameraAtModelMC.Click += (s, e) => camera.TurnAt(modelPointsAvgCenter);
+            ButtonCenterCameraAtModelGC.Click += (s, e) => scene.Camera.TurnAt(modelCenter);
+            ButtonCenterCameraAtModelMC.Click += (s, e) => scene.Camera.TurnAt(modelPointsAvgCenter);
             ButtonFishEyeFOV.Click += (s, e) => updateCameraModes();
-            ButtonAxes.Click += (s, e) => updateAxes();
-            ButtonGround.Click += (s, e) => updateGround();
+            ButtonAxes.Click += (s, e) => scene.IsAxesVisible = ButtonAxes.IsChecked.Value;
+            ButtonGround.Click += (s, e) => scene.IsGroundVisible = ButtonGround.IsChecked.Value;
             ButtonSwapNormals.Click += (s, e) => { Utils.InvertNormals(meshBase); updateMeshes(true); };
             ButtonRemoveNormals.Click += (s, e) => { meshBase.Normals.Clear(); updateMeshes(true); };
             ButtonChangeVerticesOrder.Click += (s, e) => { Utils.InvertVertexOrder(meshBase); updateMeshes(true); };
@@ -65,6 +63,7 @@ namespace SolidModelBrowser
             ButtonMaximize.Click += (s, e) => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
             ButtonClose.Click += (s, e) => Close();
 
+            scene.ShiftAndDrag += (s, e) => this.DragMove();
             sliderSliceHeight.ValueChanged += (s, e) => slice();
 
             filePanel.IsIgnoringLetterKeysNavigation = true;
@@ -77,13 +76,6 @@ namespace SolidModelBrowser
 
             this.PreviewKeyDown += MainWindow_PreviewKeyDown;
                         
-            camera = new UCamera(viewport3D);
-
-            tempForAxes = axesgroup;
-            modelgroup.Children.Remove(axesgroup);
-            tempForGround = ground;
-            modelgroup.Children.Remove(ground);
-
             loadingTimer.Tick += LoadingTimer_Tick;
 
             loadSettings();
@@ -108,7 +100,7 @@ namespace SolidModelBrowser
 
         void showInfo(string info) { textBlockInfo.Text = info; infoContainer.Visibility = Visibility.Visible; }
         void hideInfo() => infoContainer.Visibility = Visibility.Collapsed;
-        void showModelInfo() => showInfo($"File: {lastFilename}\r\n\r\nVertices: {mesh.Positions.Count}\r\nTriangles: {mesh.TriangleIndices.Count / 3}\r\nNormals: {mesh.Normals.Count}\r\n\r\nSize X:{modelSize.X.ToString("0.00")}, Y:{modelSize.Y.ToString("0.00")}, Z:{modelSize.Z.ToString("0.00")}\r\nGeometric Center X:{modelCenter.X.ToString("0.00")}, Y:{modelCenter.Y.ToString("0.00")}, Z:{modelCenter.Z.ToString("0.00")}\r\nPoints Average Center X:{modelPointsAvgCenter.X.ToString("0.00")}, Y:{modelPointsAvgCenter.Y.ToString("0.00")}, Z:{modelPointsAvgCenter.Z.ToString("0.00")}");
+        void showModelInfo() => showInfo($"File: {lastFilename}\r\n\r\nVertices: {scene.Mesh.Positions.Count}\r\nTriangles: {scene.Mesh.TriangleIndices.Count / 3}\r\nNormals: {scene.Mesh.Normals.Count}\r\n\r\nSize X:{modelSize.X.ToString("0.00")}, Y:{modelSize.Y.ToString("0.00")}, Z:{modelSize.Z.ToString("0.00")}\r\nGeometric Center X:{modelCenter.X.ToString("0.00")}, Y:{modelCenter.Y.ToString("0.00")}, Z:{modelCenter.Z.ToString("0.00")}\r\nPoints Average Center X:{modelPointsAvgCenter.X.ToString("0.00")}, Y:{modelPointsAvgCenter.Y.ToString("0.00")}, Z:{modelPointsAvgCenter.Z.ToString("0.00")}");
 
 
         private void LoadingTimer_Tick(object sender, EventArgs e)
@@ -134,10 +126,10 @@ namespace SolidModelBrowser
                 meshBase = Utils.FillMeshFromImport();
                 meshWireframe = null;
                 if (settings.UnsmoothAfterLoading) meshBase = Utils.UnsmoothMesh(meshBase);
-                Utils.FillMesh(meshBase, mesh);
+                Utils.FillMesh(meshBase, scene.Mesh);
                 Utils.GetModelCenterAndSize(meshBase, out modelCenter, out modelPointsAvgCenter, out modelSize);
-                camera.LookCenter = settings.DefaultLookAtModelPointsAvgCenter ? modelPointsAvgCenter : modelCenter;
-                camera.DefaultPosition(modelSize.Length, settings.CameraInitialShift);
+                scene.Camera.LookCenter = settings.DefaultLookAtModelPointsAvgCenter ? modelPointsAvgCenter : modelCenter;
+                scene.Camera.DefaultPosition(modelSize.Length, settings.CameraInitialShift);
 
                 if (Import.CurrentImport.InitialXRotationNeeded) addRotation(90.0, 0, 0);
                 if (ButtonShowModelInfo.IsChecked.Value) showModelInfo();
@@ -214,12 +206,12 @@ namespace SolidModelBrowser
                 if (e.Key == Key.Q) addRotation(0, -ra, 0);
 
                 double cis = settings.CameraInitialShift;
-                if (e.Key == Key.G) camera.RelativePosition(modelSize.Length, 0, -cis, 0);
-                if (e.Key == Key.R) camera.RelativePosition(modelSize.Length, 0, cis, 0);
-                if (e.Key == Key.F) camera.RelativePosition(modelSize.Length, -cis, 0, 0);
-                if (e.Key == Key.H) camera.RelativePosition(modelSize.Length, cis, 0, 0);
-                if (e.Key == Key.T) camera.RelativePosition(modelSize.Length, 0, -0.0001, cis);
-                if (e.Key == Key.B) camera.RelativePosition(modelSize.Length, 0, -0.0001, -cis);
+                if (e.Key == Key.G) scene.Camera.RelativePosition(modelSize.Length, 0, -cis, 0);
+                if (e.Key == Key.R) scene.Camera.RelativePosition(modelSize.Length, 0, cis, 0);
+                if (e.Key == Key.F) scene.Camera.RelativePosition(modelSize.Length, -cis, 0, 0);
+                if (e.Key == Key.H) scene.Camera.RelativePosition(modelSize.Length, cis, 0, 0);
+                if (e.Key == Key.T) scene.Camera.RelativePosition(modelSize.Length, 0, -0.0001, cis);
+                if (e.Key == Key.B) scene.Camera.RelativePosition(modelSize.Length, 0, -0.0001, -cis);
 
                 if (e.Key == Key.F1)
                 {
@@ -231,13 +223,13 @@ namespace SolidModelBrowser
                 if (e.Key == Key.F3) { ButtonSpecularMaterial.Toggle(); applyMaterials(); }
                 if (e.Key == Key.F4) { ButtonEmissiveMaterial.Toggle(); applyMaterials(); }
                 if (e.Key == Key.F5) { clearView(); loadFile(lastFilename); }
-                if (e.Key == Key.F6) Utils.SaveImagePNG(viewport3D, settings.SaveImageDPI);
+                if (e.Key == Key.F6) Utils.SaveImagePNG(scene.Viewport3D, settings.SaveImageDPI);
                 if (e.Key == Key.F7) Utils.RunExternalApp(settings.ExternalApp, settings.ExternalAppArguments, lastFilename);
-                if (e.Key == Key.F8) { ButtonSelectCamera.Toggle(); camera.SelectType(ButtonSelectCamera.IsChecked.Value); }
-                if (e.Key == Key.C) camera.TurnAt(modelCenter);
-                if (e.Key == Key.M) camera.TurnAt(modelPointsAvgCenter);
-                if (e.Key == Key.O) { ButtonAxes.Toggle(); updateAxes(); }
-                if (e.Key == Key.P) { ButtonGround.Toggle(); updateGround(); }
+                if (e.Key == Key.F8) { ButtonSelectCamera.Toggle(); scene.Camera.SelectType(ButtonSelectCamera.IsChecked.Value); }
+                if (e.Key == Key.C) scene.Camera.TurnAt(modelCenter);
+                if (e.Key == Key.M) scene.Camera.TurnAt(modelPointsAvgCenter);
+                if (e.Key == Key.O) { ButtonAxes.Toggle(); scene.IsAxesVisible = ButtonAxes.IsChecked.Value; }
+                if (e.Key == Key.P) { ButtonGround.Toggle(); scene.IsGroundVisible = ButtonGround.IsChecked.Value; }
                 if (e.Key == Key.I) { ButtonShowModelInfo.Toggle(); updateModelInfo(); }
             }
 
@@ -257,35 +249,19 @@ namespace SolidModelBrowser
             meshBase.Normals.Clear();
             ButtonWireframe.IsChecked = false;
             updateMeshes(false);
-            transform.Children.Clear();
             hideInfo();
-        }
-
-
-        DiffuseMaterial matDiffuse;
-        SpecularMaterial matSpecular;
-        EmissiveMaterial matEmissive;
-        DiffuseMaterial matBackDiffuse;
-        void createMaterials()
-        {
-            matDiffuse = new DiffuseMaterial(new SolidColorBrush(settings.DiffuseColor.Color));
-            //matDiffuse.AmbientColor = Color.FromArgb(255, 0, 255, 0);
-            matSpecular = new SpecularMaterial(new SolidColorBrush(settings.SpecularColor.Color), settings.SpecularPower);
-            matEmissive = new EmissiveMaterial(new SolidColorBrush(settings.EmissiveColor.Color));
-            matBackDiffuse = new DiffuseMaterial(new SolidColorBrush(settings.BackDiffuseColor.Color));
         }
 
         void applyMaterials()
         {
-            materialGroup.Children.Clear();
-            if (ButtonDiffuseMaterial.IsChecked.Value) materialGroup.Children.Add(matDiffuse);
-            if (ButtonSpecularMaterial.IsChecked.Value) materialGroup.Children.Add(matSpecular);
-            if (ButtonEmissiveMaterial.IsChecked.Value) materialGroup.Children.Add(matEmissive);
+            if (!(ButtonDiffuseMaterial.IsChecked.Value || ButtonSpecularMaterial.IsChecked.Value || ButtonEmissiveMaterial.IsChecked.Value)) ButtonDiffuseMaterial.IsChecked = true;
+            scene.ApplyMaterials(ButtonDiffuseMaterial.IsChecked.Value, ButtonSpecularMaterial.IsChecked.Value, ButtonEmissiveMaterial.IsChecked.Value, ButtonBacksideDiffuseMaterial.IsChecked.Value);
+        }
 
-            if (materialGroup.Children.Count == 0) { materialGroup.Children.Add(matDiffuse); ButtonDiffuseMaterial.IsChecked = true; }
-            geometry.Material = materialGroup;
-
-            geometry.BackMaterial = ButtonBacksideDiffuseMaterial.IsChecked.Value ? matBackDiffuse : null;
+        void updateCameraModes()
+        {
+            scene.Camera.SelectType(ButtonSelectCamera.IsChecked.Value);
+            scene.Camera.FOV = ButtonFishEyeFOV.IsChecked.Value ? settings.FishEyeFOV : settings.FOV;
         }
 
 
@@ -304,64 +280,7 @@ namespace SolidModelBrowser
             if (settings.ColorizeFiles) { Import.FillColorsDictionary(filePanel.ExtensionsColors, settings.LightTheme); filePanel.Refresh(); }
         }
 
-        Point mLastPos;
-
-        private void Viewport_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            camera.Scale(e.Delta > 0 ? 0.9 : 1.1);
-        }
-
-        private void Viewport_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed || e.MiddleButton == MouseButtonState.Pressed)
-            {
-                Point pos = Mouse.GetPosition(viewport);
-                Point actualPos = new Point(pos.X - viewport.ActualWidth / 2, viewport.ActualHeight / 2 - pos.Y);
-                double dx = actualPos.X - mLastPos.X, dy = actualPos.Y - mLastPos.Y;
-
-                if (e.LeftButton == MouseButtonState.Pressed) camera.Move(dx, dy);
-                if (e.RightButton == MouseButtonState.Pressed) camera.Orbit(dx, dy);
-
-                mLastPos = actualPos;
-            }
-        }
-
-        private void Viewport_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left && Keyboard.IsKeyDown(Key.LeftShift)) { this.DragMove(); return; }
-
-            Point pos = Mouse.GetPosition(viewport);
-            mLastPos = new Point(pos.X - viewport.ActualWidth / 2, viewport.ActualHeight / 2 - pos.Y);
-            ((IInputElement)sender).CaptureMouse();
-        }
-
-        private void Viewport_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            ((IInputElement)sender).ReleaseMouseCapture();
-        }
-
-
-
-        void updateCameraModes()
-        {
-            camera.SelectType(ButtonSelectCamera.IsChecked.Value);
-            camera.FOV = ButtonFishEyeFOV.IsChecked.Value ? settings.FishEyeFOV : settings.FOV;
-        }
-
-        Model3DGroup tempForAxes;
-        void updateAxes()
-        {
-            if (!ButtonAxes.IsChecked.Value) modelgroup.Children.Remove(axesgroup);// axesgroup = tempForAxes;
-            else modelgroup.Children.Add(tempForAxes);
-        }
-
-        GeometryModel3D tempForGround;
-        void updateGround()
-        {
-            if (!ButtonGround.IsChecked.Value) modelgroup.Children.Remove(ground);
-            else modelgroup.Children.Add(tempForGround);
-        }
-
+        
         void updateModelInfo()
         {
             if (ButtonShowModelInfo.IsChecked.Value) showModelInfo();
@@ -391,7 +310,7 @@ namespace SolidModelBrowser
                     meshWireframe = Utils.ConvertToWireframe(meshBase, settings.WireframeEdgeScale);
             }
             else meshWireframe = null;
-            Utils.FillMesh(wfmode ? meshWireframe : meshBase, mesh);
+            Utils.FillMesh(wfmode ? meshWireframe : meshBase, scene.Mesh);
             slice();
         }
 
@@ -410,23 +329,23 @@ namespace SolidModelBrowser
         void slice()
         {
             if (skipslice) return;
-            Utils.SliceMesh(ButtonWireframe.IsChecked.Value ? meshWireframe : meshBase, mesh, sliderSliceHeight.Value);
-            if (mesh.TriangleIndices.Count == 0) { mesh.TriangleIndices.Add(0); }
+            Utils.SliceMesh(ButtonWireframe.IsChecked.Value ? meshWireframe : meshBase, scene.Mesh, sliderSliceHeight.Value);
+            if (scene.Mesh.TriangleIndices.Count == 0) { scene.Mesh.TriangleIndices.Add(0); }
             //showInfo($"ms: {Utils.sw.ElapsedMilliseconds}\r\nticks: {Utils.sw.ElapsedTicks}\r\nheight: {sliderSliceHeight.Value}, slicescount {++slicescount}, tris: {mesh.TriangleIndices.Count}");
         }
 
         void export()
         {
             string exporters = string.Join(",", Export.Exports.Select(e => e.Description).OrderBy(e => e));
-            string r = Utils.MessageWindow("Select format", this, exporters, Orientation.Vertical);
+            string r = Utils.MessageWindow("Select export format", this, exporters, Orientation.Vertical);
             var exp = Export.Exports.FirstOrDefault(e => e.Description == r);
             if (exp == null) return;
             var sfd = new System.Windows.Forms.SaveFileDialog() { DefaultExt = exp.Extension, Filter = $"{exp.Description}|*.{exp.Extension}" };
             if (sfd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
             try
             {
-                MeshGeometry3D m = mesh;
-                if (exp.InitialXRotationNeeded) { m = mesh.Clone(); Utils.RotateMesh(m, settings.DefaultLookAtModelPointsAvgCenter ? modelPointsAvgCenter : modelCenter, -90, 0, 0); }
+                MeshGeometry3D m = scene.Mesh;
+                if (exp.InitialXRotationNeeded) { m = scene.Mesh.Clone(); Utils.RotateMesh(m, settings.DefaultLookAtModelPointsAvgCenter ? modelPointsAvgCenter : modelCenter, -90, 0, 0); }
                 exp.Save(m, sfd.FileName);
                 showInfo($"Exported to file {sfd.FileName}");
             }

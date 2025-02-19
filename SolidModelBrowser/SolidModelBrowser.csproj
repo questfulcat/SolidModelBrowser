@@ -63,8 +63,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\ColorSelector.xaml.cs">
-      <DependentUpon>ColorSelector.xaml</DependentUpon>
+    <Compile Include="Controls\ColorInput.xaml.cs">
+      <DependentUpon>ColorInput.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DoubleValuesInput.xaml.cs">
+      <DependentUpon>DoubleValuesInput.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\FileNavigationPanel.xaml.cs">
       <DependentUpon>FileNavigationPanel.xaml</DependentUpon>
@@ -96,12 +99,16 @@
     <Compile Include="PropertyInfoAttribute.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Controls\TextEncodedImage.cs" />
-    <Compile Include="UCamera.cs" />
+    <Compile Include="Controls\UCamera.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Controls\ColorSelector.xaml">
+    <Page Include="Controls\ColorInput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DoubleValuesInput.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

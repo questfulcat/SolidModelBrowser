@@ -4,9 +4,9 @@ using System.Windows.Media;
 
 namespace SolidModelBrowser
 {
-    public partial class ColorSelector : UserControl
+    public partial class ColorInput : UserControl
     {
-        public ColorSelector()
+        public ColorInput()
         {
             InitializeComponent();
             NBAlpha.ValueChanged += NB_ValueChanged;

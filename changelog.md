@@ -1,10 +1,13 @@
 # Solid Model Browser, change log
 
-## v0.5.1
+## v0.6 (19.02.2025)
 
-- Export to STL, OBJ, PLY formats added
-- Settings menu, reset to defaults and open in text editor buttons added
+- Export to STL, 3MF, OBJ, PLY formats added
+- Settings menu: reset to defaults and open in text editor buttons added
 - Rotation reworked (slower, but now it applied to model geometry data)
+- Axes length setting added
+- Ground settings added (size, color, checker size)
+- Ambient light and directional lights settings added
 
 ## v0.5 (28.01.2025)
 

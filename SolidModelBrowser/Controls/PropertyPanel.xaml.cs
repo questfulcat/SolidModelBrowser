@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace SolidModelBrowser
 {
@@ -14,7 +16,8 @@ namespace SolidModelBrowser
 
         Thickness vmargin = new Thickness(0, 8, 0, 8);
         Thickness hmargin = new Thickness(8, 0, 8, 0);
-        Thickness categoryMargin = new Thickness(8, 16, 0, 0);
+        Thickness categoryMargin = new Thickness(0, 24, 0, 8);
+        Thickness categoryPadding = new Thickness(8, 4, 0, 4);
         string lastCategory = "";
 
         void addProperty(PropertyInfoAttribute p)
@@ -23,8 +26,11 @@ namespace SolidModelBrowser
 
             if (p.Category != lastCategory)
             {
-                TextBlock tb = new TextBlock() { Text = p.Category, Padding = categoryMargin, FontWeight = FontWeights.Bold };
-                panel.Children.Add(tb);
+                Border b = new Border() { Margin = categoryMargin, Padding = categoryPadding, CornerRadius = new CornerRadius(4) };
+                b.SetResourceReference(Border.BackgroundProperty, "PanelBack");
+                TextBlock tb = new TextBlock() { Text = p.Category, FontWeight = FontWeights.Bold };
+                b.Child = tb;
+                panel.Children.Add(b);
 
                 lastCategory = p.Category;
             }
@@ -76,13 +82,41 @@ namespace SolidModelBrowser
             }
             if (type == typeof(SColor))
             {
-                ColorSelector cs = new ColorSelector() { ColorValue = ((SColor)p.Value).Color };
+                ColorInput cs = new ColorInput() { ColorValue = ((SColor)p.Value).Color };
                 cs.ValueChanged += valueChanged;
                 cs.Tag = p;
 
                 StackPanel sp = new StackPanel() { Orientation = Orientation.Vertical, Margin = vmargin };
                 sp.Children.Add(new TextBlock() { Text = p.MenuLabel, ToolTip = p.Description });
                 sp.Children.Add(cs);
+                panel.Children.Add(sp);
+            }
+            if (type == typeof(Rect))
+            {
+                DoubleValuesInput dvi = new DoubleValuesInput(new string[] { "X", "Y", "W", "H" }, -10000.0, 10000, 0);
+                var r = (Rect)p.Value;
+                dvi[0] = r.X; dvi[1] = r.Y; dvi[2] = r.Width; dvi[3] = r.Height;
+                dvi.SetMinValue(2, 10.0);
+                dvi.SetMinValue(3, 10.0);
+                dvi.ValueChanged += valueChanged;
+                dvi.Tag = p;
+
+                StackPanel sp = new StackPanel() { Orientation = Orientation.Vertical, Margin = vmargin };
+                sp.Children.Add(new TextBlock() { Text = p.MenuLabel, ToolTip = p.Description });
+                sp.Children.Add(dvi);
+                panel.Children.Add(sp);
+            }
+            if (type == typeof(Vector3D))
+            {
+                DoubleValuesInput dvi = new DoubleValuesInput(new string[] { "X", "Y", "Z" }, -10000.0, 10000, 0);
+                var r = (Vector3D)p.Value;
+                dvi[0] = r.X; dvi[1] = r.Y; dvi[2] = r.Z;
+                dvi.ValueChanged += valueChanged;
+                dvi.Tag = p;
+
+                StackPanel sp = new StackPanel() { Orientation = Orientation.Vertical, Margin = vmargin };
+                sp.Children.Add(new TextBlock() { Text = p.MenuLabel, ToolTip = p.Description });
+                sp.Children.Add(dvi);
                 panel.Children.Add(sp);
             }
         }
@@ -92,7 +126,7 @@ namespace SolidModelBrowser
             try
             {
                 panel.Children.Clear();
-                var props = PropertyInfoAttribute.GetPropertiesInfoList(o, true).Where(p => p.MenuLabel != null).OrderBy(p => p.Category + p.Name);
+                var props = PropertyInfoAttribute.GetPropertiesInfoList(o, false).Where(p => p.MenuLabel != null).OrderBy(p => p.Category + p.SortPrefix + p.MenuLabel);
                 foreach (var p in props) addProperty(p);
             }
             catch (Exception exc) { Utils.MessageWindow($"Settings enumeration failed with message\r\n{exc.Message}"); }
@@ -112,7 +146,9 @@ namespace SolidModelBrowser
                 if (t == typeof(bool)) p.Property.SetValue(p.Object, (Sender as CheckBox).IsChecked);
                 if (t == typeof(int)) p.Property.SetValue(p.Object, (int)((Sender as NumericBox).Value));
                 if (t == typeof(double)) p.Property.SetValue(p.Object, (Sender as NumericBox).Value);
-                if (t == typeof(SColor)) p.Property.SetValue(p.Object, new SColor((Sender as ColorSelector).ColorValue));
+                if (t == typeof(SColor)) p.Property.SetValue(p.Object, new SColor((Sender as ColorInput).ColorValue));
+                if (t == typeof(Rect)) p.Property.SetValue(p.Object, new Rect((Sender as DoubleValuesInput)[0], (Sender as DoubleValuesInput)[1], (Sender as DoubleValuesInput)[2], (Sender as DoubleValuesInput)[3]));
+                if (t == typeof(Vector3D)) p.Property.SetValue(p.Object, new Vector3D((Sender as DoubleValuesInput)[0], (Sender as DoubleValuesInput)[1], (Sender as DoubleValuesInput)[2]));
             }
             catch (Exception exc) { Utils.MessageWindow($"Setting '{p.Name}' value change failed with message\r\n{exc.Message}"); }
         }

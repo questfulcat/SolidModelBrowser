@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace SolidModelBrowser
@@ -14,6 +15,7 @@ namespace SolidModelBrowser
         public string Category { get; set; }
         public string Description { get; set; }
         public string MenuLabel { get; set; }
+        public string SortPrefix { get; set; }
         public double Min { get; set; } = 0.0;
         public double Max { get; set; } = double.MaxValue;
         public double Increment { get; set; } = 1.0;
@@ -34,12 +36,13 @@ namespace SolidModelBrowser
                     Category = attr.Category ?? "All",
                     Description = attr.Description,
                     MenuLabel = attr.MenuLabel,
+                    SortPrefix = attr.SortPrefix,
                     Min = attr.Min,
                     Max = attr.Max,
                     Increment = attr.Increment
                 });
             }
-            if (sort) pi.Sort((a, b) => string.Compare(a.Category + a.Name, b.Category + b.Name));
+            if (sort) pi = pi.OrderBy(p => p.Category + p.SortPrefix + p.Name).ToList();// pi.Sort((a, b) => string.Compare(a.Category + a.Name, b.Category + b.Name));
             return pi;
         }
     }

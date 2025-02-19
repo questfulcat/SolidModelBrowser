@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace SolidModelBrowser
 {
@@ -54,16 +55,16 @@ namespace SolidModelBrowser
         public int SaveImageDPI { get; set; } = 600;
 
 
-        [PropertyInfo(Category = "Materials", Description = "Model diffuse color ARGB", MenuLabel = "Diffuse color")]
+        [PropertyInfo(Category = "Materials", Description = "Model diffuse color ARGB", MenuLabel = "Diffuse color", SortPrefix = "00")]
         public SColor DiffuseColor { get; set; } = new SColor("#FFFFFF00");
 
-        [PropertyInfo(Category = "Materials", Description = "Model specular color ARGB", MenuLabel = "Specular color")]
+        [PropertyInfo(Category = "Materials", Description = "Model specular color ARGB", MenuLabel = "Specular color", SortPrefix = "01")]
         public SColor SpecularColor { get; set; } = new SColor("#FFDCDCDC");
 
-        [PropertyInfo(Category = "Materials", Description = "Model emissive color ARGB", MenuLabel = "Emissive color")]
+        [PropertyInfo(Category = "Materials", Description = "Model emissive color ARGB", MenuLabel = "Emissive color", SortPrefix = "02")]
         public SColor EmissiveColor { get; set; } = new SColor("#FF000040");
 
-        [PropertyInfo(Category = "Materials", Description = "Model backside diffuse color ARGB", MenuLabel = "Inner diffuse color")]
+        [PropertyInfo(Category = "Materials", Description = "Model backside diffuse color ARGB", MenuLabel = "Inner diffuse color", SortPrefix = "03")]
         public SColor BackDiffuseColor { get; set; } = new SColor("#FFFF0000");
 
         [PropertyInfo(Category = "Materials", Description = "Value that specifies the degree to which a material applied to a 3-D model reflects the lighting model as shine", MenuLabel = "Specular power", Min = 0.0, Max = 10000.0)]
@@ -98,7 +99,7 @@ namespace SolidModelBrowser
         public bool ColorizeFiles { get; set; } = true;
 
         [PropertyInfo(Category = "Interface", Description = "Sort files by extensions in filepanel", MenuLabel = "Sort files by extensions")]
-        public bool SortFilesByExtensions { get; set; } = false;
+        public bool SortFilesByExtensions { get; set; } = true;
 
 
         [PropertyInfo(Category = "Camera", Description = "Camera field of view angle", MenuLabel = "Normal FOV", Min = 5.0, Max = 160.0)]
@@ -115,7 +116,7 @@ namespace SolidModelBrowser
 
 
 
-        [PropertyInfo(Category = "Model", Description = "Model rotation angle: 45/90 deg options allowed", MenuLabel = "Rotation angle", Min = 5.0, Max = 180.0)]
+        [PropertyInfo(Category = "Model", Description = "Model rotation angle 5...180 deg", MenuLabel = "Rotation angle", Min = 5.0, Max = 180.0)]
         public double ModelRotationAngle { get; set; } = 90.0;
 
         [PropertyInfo(Category = "Model", Description = "Wireframe mode edge scaling factor 0.001...0.9", MenuLabel = "Wireframe edge scale", Min = 0.001, Max = 0.9, Increment = 0.01)]
@@ -126,6 +127,60 @@ namespace SolidModelBrowser
 
         [PropertyInfo(Category = "Model", Description = "Convert smoothed models to flat automatically", MenuLabel = "Unsmooth after loading")]
         public bool UnsmoothAfterLoading { get; set; } = false;
+
+
+
+        [PropertyInfo(Category = "Scene", Description = "Axes length (X, Y, Z)", MenuLabel = "Axes length", Min = 10.0, Max = 10000.0)]
+        public double AxesLength { get; set; } = 1000.0;
+
+        [PropertyInfo(Category = "Scene", Description = "Ground rectangle (left, bottom, width and height)", MenuLabel = "Ground rectangle")]
+        public Rect GroundRectangle { get; set; } = new Rect(-500, -500, 1000, 1000);
+
+        [PropertyInfo(Category = "Scene", Description = "Ground checker size", MenuLabel = "Ground checker size", Min = 10.0, Max = 1000.0)]
+        public double GroundCheckerSize { get; set; } = 50.0;
+
+        [PropertyInfo(Category = "Scene", Description = "Ground diffuse color ARGB", MenuLabel = "Ground diffuse color")]
+        public SColor GroundDiffuseColor { get; set; } = new SColor("#40FFFFFF");
+
+        [PropertyInfo(Category = "Scene", Description = "Ground emissive color ARGB", MenuLabel = "Ground emissive color")]
+        public SColor GroundEmissiveColor { get; set; } = new SColor("#FF000040");
+
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Ambient light enabled", MenuLabel = "Ambient light enabled", SortPrefix = "00")]
+        public bool IsAmbientLightEnabled { get; set; } = true;
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Ambient light color ARGB", MenuLabel = "Ambient light color", SortPrefix = "01")]
+        public SColor AmbientLightColor { get; set; } = new SColor("#FF202020");
+
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Directional light 1 enabled", MenuLabel = "Directional light 1 enabled", SortPrefix = "02")]
+        public bool IsDirectionalLight1Enabled { get; set; } = true;
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Directional light 1 color ARGB", MenuLabel = "Directional light 1 color", SortPrefix = "03")]
+        public SColor DirectionalLight1Color { get; set; } = new SColor("#FF0000FF");
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Directional light 1 direction", MenuLabel = "Directional light 1 direction", SortPrefix = "04")]
+        public Vector3D DirectionalLight1Dir { get; set; } = new Vector3D(2, 5, -5);
+
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Directional light 2 enabled", MenuLabel = "Directional light 2 enabled", SortPrefix = "05")]
+        public bool IsDirectionalLight2Enabled { get; set; } = true;
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Directional light 2 color ARGB", MenuLabel = "Directional light 2 color", SortPrefix = "06")]
+        public SColor DirectionalLight2Color { get; set; } = new SColor("#FFD0D0D0");
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Directional light 2 direction", MenuLabel = "Directional light 2 direction", SortPrefix = "07")]
+        public Vector3D DirectionalLight2Dir { get; set; } = new Vector3D(-2, 5, -5);
+
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Directional light 3 enabled", MenuLabel = "Directional light 3 enabled", SortPrefix = "08")]
+        public bool IsDirectionalLight3Enabled { get; set; } = true;
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Directional light 3 color ARGB", MenuLabel = "Directional light 3 color", SortPrefix = "09")]
+        public SColor DirectionalLight3Color { get; set; } = new SColor("#FFFF8080");
+
+        [PropertyInfo(Category = "Scene Lights", Description = "Directional light 3 direction", MenuLabel = "Directional light 3 direction", SortPrefix = "10")]
+        public Vector3D DirectionalLight3Dir { get; set; } = new Vector3D(1, -5, 1);
 
 
 
