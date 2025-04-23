@@ -5,123 +5,108 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SolidModelBrowser"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800" WindowStyle="None" Background="{DynamicResource WindowBack}" Foreground="{DynamicResource WindowFore}" MinWidth="600" MinHeight="400">
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0" />
-    </WindowChrome.WindowChrome>
+        Style="{StaticResource CustomWindowStyle}"
+        Title="Solid Model Browser" Height="600" Width="800" MinWidth="600" MinHeight="400">
 
-    <Border BorderThickness="1">
-        <Border.Style>
-            <Style TargetType="{x:Type Border}">
-                <Style.Triggers>
-                    <DataTrigger Value="Maximized" Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}">
-                        <Setter Property="Margin" Value="7"/>
-                    </DataTrigger>
-                    <DataTrigger Value="Normal" Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}">
-                        <Setter Property="Margin" Value="0"/>
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-        </Border.Style>
+    <Grid>
+        <local:Scene x:Name="scene" />
 
-        <Grid>
-            <local:Scene x:Name="scene" />
+        <DockPanel x:Name="MainContainer">
 
-            <DockPanel x:Name="MainContainer">
+            <Grid DockPanel.Dock="Top" Margin="0,0,0,8" MouseDown="Handler_MouseDown" Background="{DynamicResource TransparentHandle}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                <Grid DockPanel.Dock="Top" Margin="0,0,0,8" MouseDown="Handler_MouseDown" Background="{DynamicResource TransparentHandle}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <WrapPanel Grid.Column="0" DockPanel.Dock="Left" Margin="0,0,50,0">
+                    <Button x:Name="ButtonReloadModel" ToolTip="Reload model and reset camera [F5]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???O??K?of?qOOCGC?A@_O?GC?A@a_oCO}??B?_????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ReloadModel}"></local:TextEncodedImage>
+                    </Button>
+                    <Button x:Name="ButtonExport" ToolTip="Export current model to file [CTRL+S]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO?????o~BcO@HcOAHc^A@_O~JS_A|nO@Is~A~~??????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Default}"></local:TextEncodedImage>
+                    </Button>
+                    <Button x:Name="ButtonSaveImage" ToolTip="Save viewport to PNG image [F6]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO?????_F?G@_~~H?OY[ceHH{TA~do^HwRA[c??x~^???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_SaveImage}"></local:TextEncodedImage>
+                    </Button>
+                    <Button x:Name="ButtonOpenExtApp" ToolTip="Open with other application [F7]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???_@?{?_^?{N_~F?E?_@?W??E????{?_^?wF?{????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_OpenExtApp}"></local:TextEncodedImage>
+                    </Button>
+                    <Rectangle Width="2" Fill="{DynamicResource Separator}" />
+                    <Button x:Name="ButtonRotateX" ToolTip="Rotate model around X axis on 90deg [W, S]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???_B?C@__?GG_NAo`?GG??A}ne~j@?A?_?OC?w????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Rotate}"></local:TextEncodedImage>
+                    </Button>
+                    <Button x:Name="ButtonRotateY" ToolTip="Rotate model around Y axis on 90deg [Q, E]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO??????[?oW?AG_?CCoF`wO[CCA?A?_??oo?oB??????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Rotate}"></local:TextEncodedImage>
+                    </Button>
+                    <Button x:Name="ButtonRotateZ" ToolTip="Rotate model around Z axis on 90deg [A, D]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???W??E?_P?WE?uFcXaWCHEOa@C@__~F???W??E????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Rotate}"></local:TextEncodedImage>
+                    </Button>
+                    <Rectangle Width="2" Fill="{DynamicResource Separator}" />
+                    <ToggleButton x:Name="ButtonDiffuseMaterial" ToolTip="Diffuse material [F2]" Width="30" Height="30" IsChecked="True">
+                        <local:TextEncodedImage EncodedImage="?OO???oB?~BWt@jyOTLmieTTxiYUTFjioTLwi@{N?{????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_DiffuseMaterial}"></local:TextEncodedImage>
+                    </ToggleButton>
+                    <ToggleButton x:Name="ButtonSpecularMaterial" ToolTip="Specular material [F3]" Width="30" Height="30" IsChecked="True">
+                        <local:TextEncodedImage EncodedImage="?OO???oB?~Bw`@~po~G}^e~nx~Z}~F~~o~Nw~@{N?{????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_SpecularMaterial}"></local:TextEncodedImage>
+                    </ToggleButton>
+                    <ToggleButton x:Name="ButtonEmissiveMaterial" ToolTip="Emissive material [F4]" Width="30" Height="30" IsChecked="True">
+                        <local:TextEncodedImage EncodedImage="?OO???oB?BBGN@|nO~Jy~d}^h~Vy~D|nO~JGN@KK?{????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_EmissiveMaterial}"></local:TextEncodedImage>
+                    </ToggleButton>
+                    <ToggleButton x:Name="ButtonBacksideDiffuseMaterial" ToolTip="Faces backside diffuse material" Width="30" Height="30" IsChecked="False">
+                        <local:TextEncodedImage EncodedImage="?OO???oB?~Bwo@BoowLEWe@dXGXE@EJoo?Kwo@{N?{????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_BacksideDifuseMaterial}"></local:TextEncodedImage>
+                    </ToggleButton>
+                    <Rectangle Width="2" Fill="{DynamicResource Separator}" />
+                    <ToggleButton x:Name="ButtonSelectCamera" ToolTip="Orthographic camera [F8]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO?????_X?{N?~z`XR}~c~Nx~R}~c~NHCR}`F????????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_SelectCamera}"></local:TextEncodedImage>
+                    </ToggleButton>
+                    <Button x:Name="ButtonCenterCameraAtModelGC" ToolTip="Turn camera at model geometric center [C]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???_????oY?AG_GA?A_yj?G?Ga?AG?j@???_???????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_CenterCameraAtModel}"></local:TextEncodedImage>
+                    </Button>
+                    <Button x:Name="ButtonCenterCameraAtModelMC" ToolTip="Turn camera at model points average center [M]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???_????oY?AG_[A_N_yj?}?Gf?AG?j@???_???????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_CenterCameraAtModel}"></local:TextEncodedImage>
+                    </Button>
+                    <ToggleButton x:Name="ButtonFishEyeFOV" ToolTip="Fish eye FOV for perspective camera" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???o@?W??dBGw?`DGE?XAg`?cH?a@?`D__BOx?W??F?" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_FishEyeFOV}"></local:TextEncodedImage>
+                    </ToggleButton>
+                    <Rectangle Width="2" Fill="{DynamicResource Separator}" />
+                    <ToggleButton x:Name="ButtonAxes" ToolTip="Show XYZ axes lines [O]&#x0d;&#x0a;X-red, Y-green, Z-blue" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???A?o@?}??A?_??GM?AB_g?G@?IO_@Kw~F?o??C???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Axes}"></local:TextEncodedImage>
+                    </ToggleButton>
+                    <ToggleButton x:Name="ButtonGround" ToolTip="Show ground [P]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="0@@0000000000000000000l?PE5XZ1Ee`Z:FEUZZioO000" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Ground}"></local:TextEncodedImage>
+                    </ToggleButton>
+                    <Rectangle Width="2" Fill="{DynamicResource Separator}" />
+                    <Button x:Name="ButtonSwapNormals" ToolTip="Swap Normals directions (if normals are present in model)&#x0d;&#x0a;it inverses lighting directions" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO??????AAo`?}Go^A__?GG?AA_{F?}_CFW`?Y?_C????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_SwapNormals}"></local:TextEncodedImage>
+                    </Button>
+                    <Button x:Name="ButtonRemoveNormals" ToolTip="Remove original model normals (if normals are present in model)&#x0d;&#x0a;try to use it if model lightning looks wrong" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO????C?_B?{@_~??@?O?_cGPDUg_ECG`A?S@_c??@???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_RemoveNormals}"></local:TextEncodedImage>
+                    </Button>
+                    <Button x:Name="ButtonChangeVerticesOrder" ToolTip="Change model faces vertices order&#x0d;&#x0a;it swaps front and back of all model faces" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???@oO?OC?A@o@~@_N?o@?G????_@?c??C?OA?W????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ChangeVerticesOrder}"></local:TextEncodedImage>
+                    </Button>
+                    <Button x:Name="ButtonRecreateUnsmoothed" ToolTip="Recreate unsmoothed [CTRL+F]&#x0d;&#x0a;If model structure is smoothed it regenerate model to flat mode&#x0d;&#x0a;It might change polygons lighting" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="0@@0004@P3>la74@014@014@014000lO0n30O0P30@0000" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_RecreateUnsmoothed}"></local:TextEncodedImage>
+                    </Button>
+                    <Rectangle x:Name="DecorSep1" Width="2" Fill="{DynamicResource Separator}" />
+                    <ToggleButton x:Name="ButtonWireframe" ToolTip="Wireframe model [CTRL+W]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="0@@000010h00E0890A484211ioo4442Q0A4PT0@50h0040" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Wireframe}"></local:TextEncodedImage>
+                    </ToggleButton>
+                    <Rectangle Width="2" Fill="{DynamicResource Separator}" />
+                    <ToggleButton x:Name="ButtonShowModelInfo" ToolTip="Show model info [I]" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???oB?e@_X??B?ZAwu@N{oZN{oB~~o~Nw~@{N?}@???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ShowInfo}"></local:TextEncodedImage>
+                    </ToggleButton>
+                    <Button x:Name="ButtonSettings" ToolTip="Settings" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???GC?BBwo@M[_fFw~@{N?}@?N?oB?{??N?oB?W????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Settings}"></local:TextEncodedImage>
+                    </Button>
 
-                    <WrapPanel Grid.Column="0" DockPanel.Dock="Left" Margin="0,0,50,0">
-                        <Button x:Name="ButtonReloadModel" ToolTip="Reload model and reset camera [F5]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???O??K?of?qOOCGC?A@_O?GC?A@a_oCO}??B?_????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ReloadModel}"></local:TextEncodedImage>
-                        </Button>
-                        <Button x:Name="ButtonExport" ToolTip="Export current model to file [CTRL+S]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO?????o~BcO@HcOAHc^A@_O~JS_A|nO@Is~A~~??????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Default}"></local:TextEncodedImage>
-                        </Button>
-                        <Button x:Name="ButtonSaveImage" ToolTip="Save viewport to PNG image [F6]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO?????_F?G@_~~H?OY[ceHH{TA~do^HwRA[c??x~^???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_SaveImage}"></local:TextEncodedImage>
-                        </Button>
-                        <Button x:Name="ButtonOpenExtApp" ToolTip="Open with other application [F7]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???_@?{?_^?{N_~F?E?_@?W??E????{?_^?wF?{????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_OpenExtApp}"></local:TextEncodedImage>
-                        </Button>
-                        <Rectangle Width="2" Fill="{DynamicResource Separator}" />
-                        <Button x:Name="ButtonRotateX" ToolTip="Rotate model around X axis on 90deg [W, S]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???_B?C@__?GG_NAo`?GG??A}ne~j@?A?_?OC?w????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Rotate}"></local:TextEncodedImage>
-                        </Button>
-                        <Button x:Name="ButtonRotateY" ToolTip="Rotate model around Y axis on 90deg [Q, E]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO??????[?oW?AG_?CCoF`wO[CCA?A?_??oo?oB??????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Rotate}"></local:TextEncodedImage>
-                        </Button>
-                        <Button x:Name="ButtonRotateZ" ToolTip="Rotate model around Z axis on 90deg [A, D]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???W??E?_P?WE?uFcXaWCHEOa@C@__~F???W??E????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Rotate}"></local:TextEncodedImage>
-                        </Button>
-                        <Rectangle Width="2" Fill="{DynamicResource Separator}" />
-                        <ToggleButton x:Name="ButtonDiffuseMaterial" ToolTip="Diffuse material [F2]" Width="30" Height="30" IsChecked="True">
-                            <local:TextEncodedImage EncodedImage="?OO???oB?~BWt@jyOTLmieTTxiYUTFjioTLwi@{N?{????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_DiffuseMaterial}"></local:TextEncodedImage>
-                        </ToggleButton>
-                        <ToggleButton x:Name="ButtonSpecularMaterial" ToolTip="Specular material [F3]" Width="30" Height="30" IsChecked="True">
-                            <local:TextEncodedImage EncodedImage="?OO???oB?~Bw`@~po~G}^e~nx~Z}~F~~o~Nw~@{N?{????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_SpecularMaterial}"></local:TextEncodedImage>
-                        </ToggleButton>
-                        <ToggleButton x:Name="ButtonEmissiveMaterial" ToolTip="Emissive material [F4]" Width="30" Height="30" IsChecked="True">
-                            <local:TextEncodedImage EncodedImage="?OO???oB?BBGN@|nO~Jy~d}^h~Vy~D|nO~JGN@KK?{????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_EmissiveMaterial}"></local:TextEncodedImage>
-                        </ToggleButton>
-                        <ToggleButton x:Name="ButtonBacksideDiffuseMaterial" ToolTip="Faces backside diffuse material" Width="30" Height="30" IsChecked="False">
-                            <local:TextEncodedImage EncodedImage="?OO???oB?~Bwo@BoowLEWe@dXGXE@EJoo?Kwo@{N?{????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_BacksideDifuseMaterial}"></local:TextEncodedImage>
-                        </ToggleButton>
-                        <Rectangle Width="2" Fill="{DynamicResource Separator}" />
-                        <ToggleButton x:Name="ButtonSelectCamera" ToolTip="Orthographic camera [F8]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO?????_X?{N?~z`XR}~c~Nx~R}~c~NHCR}`F????????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_SelectCamera}"></local:TextEncodedImage>
-                        </ToggleButton>
-                        <Button x:Name="ButtonCenterCameraAtModelGC" ToolTip="Turn camera at model geometric center [C]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???_????oY?AG_GA?A_yj?G?Ga?AG?j@???_???????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_CenterCameraAtModel}"></local:TextEncodedImage>
-                        </Button>
-                        <Button x:Name="ButtonCenterCameraAtModelMC" ToolTip="Turn camera at model points average center [M]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???_????oY?AG_[A_N_yj?}?Gf?AG?j@???_???????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_CenterCameraAtModel}"></local:TextEncodedImage>
-                        </Button>
-                        <ToggleButton x:Name="ButtonFishEyeFOV" ToolTip="Fish eye FOV for perspective camera" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???o@?W??dBGw?`DGE?XAg`?cH?a@?`D__BOx?W??F?" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_FishEyeFOV}"></local:TextEncodedImage>
-                        </ToggleButton>
-                        <Rectangle Width="2" Fill="{DynamicResource Separator}" />
-                        <ToggleButton x:Name="ButtonAxes" ToolTip="Show XYZ axes lines [O]&#x0d;&#x0a;X-red, Y-green, Z-blue" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???A?o@?}??A?_??GM?AB_g?G@?IO_@Kw~F?o??C???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Axes}"></local:TextEncodedImage>
-                        </ToggleButton>
-                        <ToggleButton x:Name="ButtonGround" ToolTip="Show ground [P]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="0@@0000000000000000000l?PE5XZ1Ee`Z:FEUZZioO000" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Ground}"></local:TextEncodedImage>
-                        </ToggleButton>
-                        <Rectangle Width="2" Fill="{DynamicResource Separator}" />
-                        <Button x:Name="ButtonSwapNormals" ToolTip="Swap Normals directions (if normals are present in model)&#x0d;&#x0a;it inverses lighting directions" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO??????AAo`?}Go^A__?GG?AA_{F?}_CFW`?Y?_C????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_SwapNormals}"></local:TextEncodedImage>
-                        </Button>
-                        <Button x:Name="ButtonRemoveNormals" ToolTip="Remove original model normals (if normals are present in model)&#x0d;&#x0a;try to use it if model lightning looks wrong" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO????C?_B?{@_~??@?O?_cGPDUg_ECG`A?S@_c??@???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_RemoveNormals}"></local:TextEncodedImage>
-                        </Button>
-                        <Button x:Name="ButtonChangeVerticesOrder" ToolTip="Change model faces vertices order&#x0d;&#x0a;it swaps front and back of all model faces" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???@oO?OC?A@o@~@_N?o@?G????_@?c??C?OA?W????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ChangeVerticesOrder}"></local:TextEncodedImage>
-                        </Button>
-                        <Button x:Name="ButtonRecreateUnsmoothed" ToolTip="Recreate unsmoothed [CTRL+F]&#x0d;&#x0a;If model structure is smoothed it regenerate model to flat mode&#x0d;&#x0a;It might change polygons lighting" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="0@@0004@P3>la74@014@014@014000lO0n30O0P30@0000" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_RecreateUnsmoothed}"></local:TextEncodedImage>
-                        </Button>
-                        <Rectangle Width="2" Fill="{DynamicResource Separator}" />
-                        <ToggleButton x:Name="ButtonWireframe" ToolTip="Wireframe model [CTRL+W]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="0@@000010h00E0890A484211ioo4442Q0A4PT0@50h0040" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Wireframe}"></local:TextEncodedImage>
-                        </ToggleButton>
-                        <Rectangle Width="2" Fill="{DynamicResource Separator}" />
-                        <ToggleButton x:Name="ButtonShowModelInfo" ToolTip="Show model info [I]" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???oB?e@_X??B?ZAwu@N{oZN{oB~~o~Nw~@{N?}@???" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_ShowInfo}"></local:TextEncodedImage>
-                        </ToggleButton>
-                        <Button x:Name="ButtonSettings" ToolTip="Settings" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???GC?BBwo@M[_fFw~@{N?}@?N?oB?{??N?oB?W????" Width="16" Height="16" EncodedImageColor="{DynamicResource MenuButton_Settings}"></local:TextEncodedImage>
-                        </Button>
+                </WrapPanel>
 
-                    </WrapPanel>
-
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Top">
-                        <Button x:Name="ButtonChangeTheme" Width="30" Height="30">
-                            <local:TextEncodedImage EncodedImage="?OO???_?OGCG_?o@?a?OO_Ds?@@_G?o@_?ACA@_???????" Width="16" Height="16" EncodedImageColor="{DynamicResource ButtonImageColor}"></local:TextEncodedImage>
-                        </Button>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Top">
+                    <Button x:Name="ButtonChangeTheme" Width="30" Height="30">
+                        <local:TextEncodedImage EncodedImage="?OO???_?OGCG_?o@?a?OO_Ds?@@_G?o@_?ACA@_???????" Width="16" Height="16" EncodedImageColor="{DynamicResource ButtonImageColor}"></local:TextEncodedImage>
+                    </Button>
+                    <StackPanel x:Name="StackPanelSystemButtons" Orientation="Horizontal">
                         <Rectangle Width="2" Fill="{DynamicResource Separator}"></Rectangle>
                         <Button x:Name="ButtonMinimize" Width="30" Height="30">
                             <local:TextEncodedImage EncodedImage="?OO?????????????????????o~N???????????????????" Width="16" Height="16" EncodedImageColor="{DynamicResource ButtonImageColor}"></local:TextEncodedImage>
@@ -133,35 +118,35 @@
                             <local:TextEncodedImage EncodedImage="?OO????????G?@CG?A@?H?_@?W??H?GC?@AG?@????????" Width="16" Height="16" EncodedImageColor="{DynamicResource ButtonImageColor}"></local:TextEncodedImage>
                         </Button>
                     </StackPanel>
-                </Grid>
+                </StackPanel>
+            </Grid>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition x:Name="FilePanelColumn" Width="200"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="FilePanelColumn" Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                    <local:FileNavigationPanel x:Name="filePanel" Background="{DynamicResource PanelBack}" Foreground="{DynamicResource WindowFore}" Padding="0,0,5,0" Grid.Column="0"></local:FileNavigationPanel>
+                <local:FileNavigationPanel x:Name="filePanel" Background="{DynamicResource PanelBack}" Foreground="{DynamicResource WindowFore}" Padding="0,0,5,0" Grid.Column="0"></local:FileNavigationPanel>
 
-                    <GridSplitter x:Name="FilePanelSplitter" Background="{DynamicResource TransparentHandle}" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="CurrentAndNext"/>
+                <GridSplitter x:Name="FilePanelSplitter" Background="{DynamicResource TransparentHandle}" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="CurrentAndNext"/>
 
-                    <Border x:Name="infoContainer" Margin="16" CornerRadius="4" Background="{DynamicResource InfoPanel}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        <ScrollViewer>
-                            <TextBlock x:Name="textBlockInfo" Margin="16" TextWrapping="Wrap" />
-                        </ScrollViewer>
+                <Border x:Name="infoContainer" Margin="16" CornerRadius="4" Background="{DynamicResource InfoPanel}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <ScrollViewer>
+                        <TextBlock x:Name="textBlockInfo" Margin="16" TextWrapping="Wrap" />
+                    </ScrollViewer>
+                </Border>
+                <Border x:Name="borderProgressContainer" Visibility="Hidden" Width="108" Height="20" CornerRadius="4" BorderThickness="1" Padding="2" BorderBrush="{DynamicResource WindowFore}" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Border x:Name="borderProgress" Width="50" Height="16" CornerRadius="4" BorderThickness="1" Background="{DynamicResource WindowFore}" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <!--TextBlock x:Name="textBlockProgress" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource WindowBack}">100</TextBlock-->
                     </Border>
-                    <Border x:Name="borderProgressContainer" Visibility="Hidden" Width="108" Height="20" CornerRadius="4" BorderThickness="1" Padding="2" BorderBrush="{DynamicResource WindowFore}" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Border x:Name="borderProgress" Width="50" Height="16" CornerRadius="4" BorderThickness="1" Background="{DynamicResource WindowFore}" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left">
-                            <!--TextBlock x:Name="textBlockProgress" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource WindowBack}">100</TextBlock-->
-                        </Border>
-                    </Border>
-                    <Border Grid.Column="1" HorizontalAlignment="Right" Margin="8">
-                        <Slider x:Name="sliderSliceHeight" Orientation="Vertical">
-                        </Slider>
-                    </Border>
-                </Grid>
+                </Border>
+                <Border Grid.Column="1" HorizontalAlignment="Right" Margin="8">
+                    <Slider x:Name="sliderSliceHeight" Orientation="Vertical">
+                    </Slider>
+                </Border>
+            </Grid>
 
-            </DockPanel>
-        </Grid>
-    </Border>
+        </DockPanel>
+    </Grid>
 </Window>

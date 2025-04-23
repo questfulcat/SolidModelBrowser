@@ -35,6 +35,9 @@ namespace SolidModelBrowser
         void loadSettings()
         {
             settings.Load();
+
+            Utils.SetWindowStyle(this, settings.UseSystemWindowStyle, StackPanelSystemButtons);
+
             if (settings.GetParseErrorsCount() > 0) Utils.MessageWindow("Settings loader warnings:\r\n\r\n" + String.Join("\r\n", settings.GetParseErrors().ToArray()));
             setAppTheme();
             this.Left = settings.LocationX;

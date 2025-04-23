@@ -101,6 +101,10 @@ namespace SolidModelBrowser
         [PropertyInfo(Category = "Interface", Description = "Sort files by extensions in filepanel", MenuLabel = "Sort files by extensions")]
         public bool SortFilesByExtensions { get; set; } = true;
 
+        [PropertyInfo(Category = "Interface", Description = "Use system style for app windows", MenuLabel = "Use system style for app windows")]
+        public bool UseSystemWindowStyle { get; set; } = false;
+
+
 
         [PropertyInfo(Category = "Camera", Description = "Camera field of view angle", MenuLabel = "Normal FOV", Min = 5.0, Max = 160.0)]
         public double FOV { get; set; } = 45.0;
@@ -182,6 +186,15 @@ namespace SolidModelBrowser
         [PropertyInfo(Category = "Scene Lights", Description = "Directional light 3 direction", MenuLabel = "Directional light 3 direction", SortPrefix = "10")]
         public Vector3D DirectionalLight3Dir { get; set; } = new Vector3D(1, -5, 1);
 
+
+        [PropertyInfo(Category = "Import GCODE", Description = "GCODE default layer height", MenuLabel = "Layer height (reload model to see changes)", Min = 0.01, Max = 10.0, Increment = 0.1)]
+        public double GCODELayerHeight { get; set; } = 0.2;
+
+        [PropertyInfo(Category = "Import GCODE", Description = "GCODE default line width", MenuLabel = "Line width (reload model to see changes)", Min = 0.01, Max = 10.0, Increment = 0.1)]
+        public double GCODELineWidth { get; set; } = 0.5;
+
+        [PropertyInfo(Category = "Import GCODE", Description = "GCODE line ends extensions", MenuLabel = "GCODE line ends extensions (reload model to see changes)", Min = -10.0, Max = 10.0, Increment = 0.1)]
+        public double GCODELineExtensions { get; set; } = 0.0;
 
 
         string defPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "settings.ini");

@@ -9,13 +9,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Media3D;
+using System.Windows.Shell;
 using System.Windows.Threading;
 
 namespace SolidModelBrowser
 {
     public partial class MainWindow : Window
     {
-        const string version = "0.6";
+        const string version = "0.6.1";
 
         MeshGeometry3D meshBase, meshWireframe;
         Point3D modelCenter = new Point3D();
@@ -32,7 +33,7 @@ namespace SolidModelBrowser
         {
             InitializeComponent();
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture; // to avoid "." "," mess while parsing
-            
+
             ButtonReloadModel.Click += (s, e) => { clearView(); loadFile(lastFilename); };
             ButtonSaveImage.Click += (s, e) => Utils.SaveImagePNG(scene.Viewport3D, settings.SaveImageDPI);
             ButtonOpenExtApp.Click += (s, e) => Utils.RunExternalApp(settings.ExternalApp, settings.ExternalAppArguments, lastFilename);
@@ -80,6 +81,7 @@ namespace SolidModelBrowser
 
             loadSettings();
             this.Closing += (s, e) => saveSettings();
+            Import.BindSettings(settings);
 
             // set max window size to avoid taskbar overlay
             var scrsize = Utils.GetCurrentScreenSize(this);
@@ -291,6 +293,7 @@ namespace SolidModelBrowser
         {
             var settingsWindow = new SettingsWindow();
             settingsWindow.Owner = this;
+            Utils.SetWindowStyle(settingsWindow, settings.UseSystemWindowStyle, settingsWindow.ButtonClose);
             settingsWindow.propertyPanel.SetObject(settings);
             this.Effect = new BlurEffect() { Radius = 4.0 };
             settingsWindow.ShowDialog();

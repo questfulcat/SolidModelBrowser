@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SolidModelBrowser.Properties;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -385,7 +386,19 @@ namespace SolidModelBrowser
             return result;
         }
 
-
+        public static void SetWindowStyle(Window w, bool systemStyle, FrameworkElement elementToHide)
+        {
+            if (systemStyle)
+            {
+                w.Style = (Style)Application.Current.Resources["SimpleWindowStyle"];
+                if (elementToHide != null) elementToHide.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                w.Style = (Style)Application.Current.Resources["CustomWindowStyle"];
+                if (elementToHide != null) elementToHide.Visibility = Visibility.Visible;
+            }
+        }
 
         public static Vector3D RotateVector(Vector3D v, double ax, double ay, double az)
         {

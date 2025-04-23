@@ -14,6 +14,8 @@ namespace SolidModelBrowser
         public static int Progress = 0;
         public static string ExceptionMessage;
 
+        protected static Settings settings;
+
         // static buffers are common for all importers
         public static List<Vector3D> Normals = new List<Vector3D>();
         public static List<Point3D> Positions = new List<Point3D>();
@@ -38,6 +40,7 @@ namespace SolidModelBrowser
             Indices.Clear();
         }
 
+        public static void BindSettings(Settings s) => settings = s;
 
         public static List<Import> Imports = new List<Import>();
         public static Import CurrentImport = null;

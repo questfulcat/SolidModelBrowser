@@ -1,5 +1,10 @@
 # Solid Model Browser, change log
 
+## v0.6.1 (23.04.2025)
+
+- Added settings to GCODE import (Layer height, Line width)
+- Added setting UseSystemWindowStyle (for compatibility issues if OS can't draw correct frameless windows)
+
 ## v0.6 (19.02.2025)
 
 - Export to STL, 3MF, OBJ, PLY formats added

@@ -13,6 +13,54 @@
         </Setter>
     </Style>
 
+    <!-- Window styles -->
+
+    <Style x:Key="CustomWindowStyle" TargetType="{x:Type Window}">
+        <Setter Property="WindowStyle" Value="None"/>
+        <Setter Property="Background" Value="{DynamicResource WindowBack}"/>
+        <Setter Property="Foreground" Value="{DynamicResource WindowFore}"/>
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome CaptionHeight="0" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Window}">
+                    <Border BorderThickness="1" Background="{DynamicResource WindowBack}" BorderBrush="{DynamicResource WindowBack}">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Style.Triggers>
+                                    <DataTrigger Value="Maximized" Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}">
+                                        <Setter Property="Padding" Value="7"/>
+                                    </DataTrigger>
+                                    <DataTrigger Value="Normal" Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}">
+                                        <Setter Property="Padding" Value="0"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <ContentPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SimpleWindowStyle" TargetType="{x:Type Window}">
+        <Setter Property="WindowStyle" Value="SingleBorderWindow"/>
+        <Setter Property="Background" Value="{DynamicResource WindowBack}"/>
+        <Setter Property="Foreground" Value="{DynamicResource WindowFore}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Window}">
+                    <Border BorderThickness="0" Background="{DynamicResource WindowBack}" BorderBrush="{DynamicResource WindowBack}">
+                        <ContentPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- Slider Style -->
 

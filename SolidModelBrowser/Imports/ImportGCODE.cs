@@ -47,17 +47,28 @@ namespace SolidModelBrowser
             return pos;
         }
 
-        Vector3D rz = new Vector3D(0.0, 0.0, 0.2);
 
         void addLine(GPosition src, GPosition dst)
         {
+            Vector3D rz = new Vector3D(0.0, 0.0, settings.GCODELayerHeight);
             Vector3D a = new Vector3D(src.X, src.Y, src.Z);
             Vector3D b = new Vector3D(dst.X, dst.Y, dst.Z);
             var r = b - a;
+            if (settings.GCODELineExtensions != 0.0)
+            {
+                var ext = r;
+                ext.Normalize();
+                ext *= settings.GCODELineExtensions;
+                if ((ext * 2).Length < r.Length)
+                {
+                    b += ext;
+                    a -= ext;
+                }
+            }
             var p = Vector3D.CrossProduct(r, rz);
             p.Normalize();
             p /= 2;
-            p *= 0.5; // line width
+            p *= settings.GCODELineWidth; // line width
 
             int i = Positions.Count;
 
